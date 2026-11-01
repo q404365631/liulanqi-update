@@ -131,6 +131,38 @@ Manifest V2 和 V3 都支持。
 
 ## 第一次使用：配置 AI
 
+### 用什么模型？全网 11 家怎么选（2026-11 调研，全部 OpenAI 兼容，设置页「自定义」直填）
+
+**🆓 完全免费长期可用（推荐先试，一分钱不花）**
+
+| 服务商 | 接口地址 | 模型名 | 说明 |
+|---|---|---|---|
+| **美团 LongCat** | `https://longcat.chat` 平台申请 | `LongCat-Flash`、`LongCat-Flash-Thinking` | **免费额度最大**（每日可领 token，活动期日领 5500 万），工具调用能力评测登顶，**AI 自动操作首选免费档** |
+| 智谱 | `https://open.bigmodel.cn/api/paas/v4` | `glm-4-flash` | 免费 128K 上下文，速度快，日常对话够用 |
+| 百度千帆 | `https://qianfan.baidubce.com/v2` | `ernie-speed`、`ernie-lite` | 长期免费（限速），新用户每模型送 100 万 token |
+| 腾讯混元 | `https://api.hunyuan.cloud.tencent.com/v1` | `hunyuan-lite` | 免费，256K 上下文（限 5 并发） |
+| 硅基流动（聚合） | `https://api.siliconflow.cn/v1` | 一个 Key 十几个免费模型 | 想同时用 Qwen/GLM/MiniMax 多家模型的偷懒选择 |
+
+**💰 低价高性价比（AI 自动操作流畅体验的最低消费，每月几块钱）**
+
+| 服务商 | 接口地址 | 模型名 | 说明 |
+|---|---|---|---|
+| DeepSeek | `https://api.deepseek.com/v1` | `deepseek-chat` | JSON 稳、速度快（每步几秒），输入约 $0.14/百万 token |
+| **智谱 GLM-5.3-Flash** | 同智谱地址 | `glm-5.3-flash` | **原生多模态：对话+视觉一个模型全搞定**（视觉模型栏可留空），价格约旗舰 1/20 |
+| 字节豆包（火山方舟） | `https://ark.cn-beijing.volces.com/api/v3` | `doubao-seed-*` 系列 | 低价主力，新用户有免费 token |
+| 阿里千问（百炼） | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-plus` | 输入最低约 ¥0.125/百万 token |
+
+**🏆 效果顶配（复杂跨站比价、长文档阅读最强）**
+
+- 智谱 `glm-5.3`（旗舰）｜ Kimi `K2.5`/`K3.1 Pro`（**100 万 token 上下文**）｜ Qwen `qwen-max` ｜ LongCat-Flash-Omni（全模态）｜ GPT 系（需中转）
+
+**👁 视觉模型怎么填**（设置页「视觉模型」一栏，用于截图识别）：
+- 免费方案：智谱 `glm-4v-flash`（完全免费）
+- 一劳永逸方案：用 `glm-5.3-flash` 当对话模型——它自带视觉，视觉栏留空即可
+
+> 💡 **选型口诀：先试美团 LongCat（免费额度最大）→ 想流畅上 deepseek-chat（每月几块钱）→ 要最强上旗舰档。** 免费政策随时可能调整，以各家官方页为准。
+## 第一次使用：配置 AI
+
 ### 用什么模型？看你想达到什么效果（2026-11 调研）
 
 | 档位 | 填什么 | 效果 | 花费 |
