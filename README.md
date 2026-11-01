@@ -131,6 +131,19 @@ Manifest V2 和 V3 都支持。
 
 ## 第一次使用：配置 AI
 
+### 用什么模型？看你想达到什么效果（2026-11 调研）
+
+| 档位 | 填什么 | 效果 | 花费 |
+|---|---|---|---|
+| **免费入门** | 服务商选「智谱」，模型 `glm-4-flash`，视觉模型 `glm-4v-flash` | 日常对话/翻译/总结流畅；AI 自动操作简单任务够用，复杂任务偏笨 | 全免费（128K 上下文） |
+| **性价比推荐** | DeepSeek 官方（`https://api.deepseek.com/v1`，模型 `deepseek-chat`）；或智谱 `glm-5.3-flash`（自带视觉，不用另填视觉模型） | **AI 自动操作流畅（每步几秒）**，复杂任务成功率高，JSON 稳定 | 极低（DeepSeek 输入约 $0.14/百万 token 级） |
+| **效果顶配** | `qwen-max`、Kimi K2.5（256K 超长上下文）、GPT 系（需中转） | 复杂跨站比价、长文档阅读最强 | 中-高 |
+
+> 💡 免费通道（如各类中转站的高规格模型）也能跑，但通常**限流且每步要等 30-60 秒**——想体验流畅的 AI 自动操作，推荐 deepseek-chat 或 glm-5.3-flash 这个级别。
+>
+> 各服务商「自定义」填法：智谱 `https://open.bigmodel.cn/api/paas/v4` ｜ DeepSeek `https://api.deepseek.com/v1` ｜ 阿里百炼 `https://dashscope.aliyuncs.com/compatible-mode/v1`。免费政策可能调整，以各家定价页为准。
+
+
 AI 功能需要一个大模型的 API Key（自己申请，通常有免费额度）：
 
 1. 打开浏览器 → 点右上角 **⋮** → **设置** → 找到 **AI 助手** 区块
