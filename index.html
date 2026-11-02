@@ -10,7 +10,6 @@
   :root { --acc:#7c5cff; --acc2:#00e5ff; --bg:#030510; --card:rgba(255,255,255,.05); --line:rgba(124,92,255,.28); }
   html { scroll-behavior:smooth; }
   body { font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif; color:#e8eaf6; background:var(--bg); line-height:1.75; overflow-x:hidden; }
-  /* ===== 流动极光背景 ===== */
   .aurora { position:fixed; inset:-20%; z-index:-3; filter:blur(90px); opacity:.55; }
   .aurora i { position:absolute; border-radius:50%; }
   .aurora i:nth-child(1) { width:520px; height:520px; background:#5b3df5; left:-8%; top:-10%; animation:drift1 26s ease-in-out infinite alternate; }
@@ -30,8 +29,9 @@
   header a { color:#9aa0c3; text-decoration:none; font-size:14px; transition:.2s; }
   header a:hover { color:#fff; text-shadow:0 0 14px rgba(0,229,255,.8); }
   header .dl { margin-left:auto; background:linear-gradient(90deg,var(--acc),#5a4bd1); color:#fff; padding:8px 18px; border-radius:10px; font-weight:bold; box-shadow:0 0 20px rgba(124,92,255,.55); }
-  /* ===== HERO：左文右机器人 ===== */
-  .hero { display:grid; grid-template-columns:1.05fr .95fr; gap:30px; align-items:center; padding:70px 22px 40px; min-height:640px; }
+  /* ===== HERO ===== */
+  .hero { padding:76px 22px 40px; min-height:560px; display:flex; flex-direction:column; justify-content:center; }
+  .hero .inner { max-width:760px; }
   .badge { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:rgba(124,92,255,.12); border-radius:999px; padding:5px 16px; font-size:13px; color:#b8bdf0; font-family:Consolas,monospace; }
   .badge i { width:8px; height:8px; border-radius:50%; background:#2ecc71; box-shadow:0 0 10px #2ecc71; animation:pulse 2s infinite; }
   @keyframes pulse { 50% { opacity:.3; } }
@@ -44,25 +44,6 @@
   .btn.ghost { background:rgba(255,255,255,.04); color:#cfd3f5; border:1px solid var(--line); margin-left:14px; box-shadow:none; }
   .btn.ghost:hover { border-color:var(--acc2); }
   .ver { display:block; margin-top:16px; color:#6b7099; font-size:13px; font-family:Consolas,monospace; }
-  /* ===== 机器人 ===== */
-  .bot { position:relative; text-align:center; }
-  .bot .holo { position:absolute; left:50%; bottom:-6px; transform:translateX(-50%); width:230px; height:26px;
-    background:radial-gradient(ellipse, rgba(0,229,255,.4), transparent 70%); animation:holo 3s ease-in-out infinite; }
-  @keyframes holo { 50% { opacity:.5; transform:translateX(-50%) scaleX(.85); } }
-  .bot svg { animation:float 3.4s ease-in-out infinite; filter:drop-shadow(0 18px 42px rgba(124,92,255,.45)); }
-  @keyframes float { 50% { transform:translateY(-14px); } }
-  .bot .wave { transform-origin:112px 58px; animation:wave 2.6s ease-in-out infinite; }
-  @keyframes wave { 0%,100% { transform:rotate(0); } 30% { transform:rotate(-24deg); } 60% { transform:rotate(10deg); } }
-  .bot .core { animation:pulse 2s infinite; }
-  .bot .ring { transform-origin:60px 112px; animation:spin 9s linear infinite; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .bubbleBig { position:relative; margin:0 auto 14px; max-width:340px; background:rgba(16,22,44,.92); border:1px solid var(--acc2); border-radius:16px; padding:13px 17px; font-size:14px; color:#dfe4ff; min-height:64px; box-shadow:0 0 30px rgba(0,229,255,.25); text-align:left; }
-  .bubbleBig::after { content:''; position:absolute; bottom:-9px; left:50%; width:15px; height:15px; background:rgba(16,22,44,.92); border-right:1px solid var(--acc2); border-bottom:1px solid var(--acc2); transform:translateX(-50%) rotate(45deg); }
-  /* ===== 固定小智（滚过首屏后出现） ===== */
-  #guide { position:fixed; right:20px; bottom:18px; z-index:60; width:220px; text-align:center; opacity:0; pointer-events:none; transition:opacity .4s; }
-  #guide.on { opacity:1; }
-  #guide .bubble { background:rgba(16,22,44,.94); border:1px solid var(--acc2); border-radius:14px; padding:10px 14px; font-size:13px; color:#dfe4ff; margin-bottom:8px; min-height:50px; box-shadow:0 0 26px rgba(0,229,255,.25); }
-  #guide svg { filter:drop-shadow(0 0 16px rgba(0,229,255,.3)); animation:float 3.4s ease-in-out infinite; }
   /* ===== 区块 ===== */
   h2 { text-align:center; font-size:32px; margin:84px 0 6px; }
   h2 span { background:linear-gradient(90deg,#a78bfa,#00e5ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
@@ -86,7 +67,13 @@
   footer { border-top:1px solid var(--line); margin-top:70px; padding:30px 22px 44px; text-align:center; color:#565d85; font-size:13px; }
   footer a { color:#8a90b8; text-decoration:none; margin:0 9px; }
   footer a:hover { color:#fff; }
-  @media (max-width:900px){ .hero { grid-template-columns:1fr; text-align:center; padding-top:44px; } .hero .bot { order:-1; } .btn.ghost { margin-left:8px; } #guide { display:none; } }
+  .build { font-family:Consolas,monospace; color:#3d4470; font-size:11px; margin-top:8px; }
+  /* ===== 飞行小智（JS 逐帧驱动，会飞、会浮、会眨眼） ===== */
+  #companion { position:fixed; z-index:70; width:230px; pointer-events:none; will-change:transform; }
+  #companion .bubble { background:rgba(16,22,44,.94); border:1px solid var(--acc2); border-radius:14px; padding:11px 15px; font-size:13.5px; color:#dfe4ff; min-height:56px; box-shadow:0 0 28px rgba(0,229,255,.28); margin-bottom:10px; position:relative; }
+  #companion .bubble::after { content:''; position:absolute; bottom:-9px; left:38px; width:14px; height:14px; background:rgba(16,22,44,.94); border-right:1px solid var(--acc2); border-bottom:1px solid var(--acc2); transform:rotate(45deg); }
+  #companion svg { filter:drop-shadow(0 14px 34px rgba(124,92,255,.5)); display:block; margin:0 auto; }
+  @media (max-width:760px){ #companion { display:none; } }
 </style>
 </head>
 <body>
@@ -103,40 +90,13 @@
 </div></header>
 
 <section class="hero" id="top">
-  <div>
+  <div class="inner">
     <span class="badge"><i></i>v0.3.1 · Windows 10/11 · 免费</span>
     <h1>会<em>帮你干活</em><br>的浏览器</h1>
     <p class="lead">说一句话，它替你搜、替你点、替你总结。看过的网页它能记住，表单它帮你填，数据加密备份到你自己网盘。</p>
     <a class="btn" id="dlMain" href="https://github.com/q404365631/liulanqi-update/releases/latest">⬇ 免费下载</a>
     <a class="btn ghost" href="https://github.com/q404365631/liulanqi-update">GitHub</a>
     <span class="ver">Windows 10 / 11 64 位 ｜ 无广告 ｜ 无账号系统</span>
-  </div>
-  <div class="bot">
-    <div class="bubbleBig" id="botSay"></div>
-    <div class="holo"></div>
-    <svg width="240" height="210" viewBox="0 0 140 130">
-      <defs>
-        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#8b6cff"/><stop offset="1" stop-color="#00e5ff"/>
-        </linearGradient>
-        <radialGradient id="core" cx=".5" cy=".5" r=".5">
-          <stop offset="0" stop-color="#00e5ff"/><stop offset="1" stop-color="#7c5cff" stop-opacity=".2"/>
-        </radialGradient>
-      </defs>
-      <g class="antenna"><line x1="70" y1="16" x2="70" y2="28" stroke="url(#g1)" stroke-width="3"/>
-        <circle cx="70" cy="12" r="5" fill="#00e5ff"><animate attributeName="opacity" values="1;.2;1" dur="1.5s" repeatCount="indefinite"/></circle></g>
-      <rect x="30" y="28" width="80" height="56" rx="18" fill="url(#g1)" opacity=".95"/>
-      <rect x="39" y="41" width="62" height="28" rx="13" fill="#05070f"/>
-      <g class="eye"><ellipse id="eyeL" cx="57" cy="55" rx="7" ry="8" fill="#00e5ff"/><circle cx="59.5" cy="52.5" r="2" fill="#fff" opacity=".9"/></g>
-      <g class="eye"><ellipse id="eyeR" cx="83" cy="55" rx="7" ry="8" fill="#00e5ff"/><circle cx="85.5" cy="52.5" r="2" fill="#fff" opacity=".9"/></g>
-      <rect x="22" y="44" width="9" height="22" rx="4.5" fill="url(#g1)"/>
-      <rect x="109" y="44" width="9" height="22" rx="4.5" fill="url(#g1)"/>
-      <g class="wave"><rect x="116" y="30" width="9" height="24" rx="4.5" fill="url(#g1)" transform="rotate(-30 120 42)"/></g>
-      <rect x="42" y="90" width="56" height="26" rx="12" fill="url(#g1)" opacity=".9"/>
-      <circle class="core" cx="70" cy="103" r="9" fill="url(#core)"/>
-      <circle class="core" cx="70" cy="103" r="13" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity=".6"/>
-      <g class="ring"><ellipse cx="70" cy="118" rx="52" ry="9" fill="none" stroke="#00e5ff" stroke-width="1.2" stroke-dasharray="10 8" opacity=".55"/></g>
-    </svg>
   </div>
 </section>
 
@@ -180,39 +140,99 @@
 <footer>
   <a href="PRIVACY.md">隐私政策</a>｜<a href="TERMS.md">服务条款</a>｜<a href="baidu-backup-guide.md">网盘备份教程</a>｜<a href="https://github.com/q404365631/liulanqi-update">GitHub</a>
   <br><br>AI浏览器 · 数据不属于我们，属于你
+  <div class="build">site build v5</div>
 </footer>
 
-<!-- 滚动小智 -->
-<div id="guide">
-  <div class="bubble" id="guideSay"></div>
-  <svg width="86" height="80" viewBox="0 0 140 130">
-    <rect x="30" y="28" width="80" height="56" rx="18" fill="url(#g1)" opacity=".95"/>
-    <rect x="39" y="41" width="62" height="28" rx="13" fill="#05070f"/>
-    <ellipse cx="57" cy="55" rx="7" ry="8" fill="#00e5ff"/><ellipse cx="83" cy="55" rx="7" ry="8" fill="#00e5ff"/>
-    <rect x="42" y="90" width="56" height="26" rx="12" fill="url(#g1)" opacity=".9"/>
+<!-- 飞行小智：JS 逐帧驱动 -->
+<div id="companion">
+  <div class="bubble" id="compSay">你好！我是小智 🤖 这台浏览器的 AI 管家。往下滚，我带你飞一圈！</div>
+  <svg width="150" height="132" viewBox="0 0 140 130" id="botSvg">
+    <defs>
+      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8b6cff"/><stop offset="1" stop-color="#00e5ff"/>
+      </linearGradient>
+      <radialGradient id="core" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#00e5ff"/><stop offset="1" stop-color="#7c5cff" stop-opacity=".15"/>
+      </radialGradient>
+    </defs>
+    <g class="antenna"><line x1="70" y1="14" x2="70" y2="27" stroke="url(#g1)" stroke-width="3"/>
+      <circle cx="70" cy="10" r="5" fill="#00e5ff" id="antennaDot"/></g>
+    <rect x="30" y="27" width="80" height="56" rx="18" fill="url(#g1)"/>
+    <rect x="39" y="40" width="62" height="28" rx="13" fill="#05070f"/>
+    <g id="eyeL"><ellipse cx="57" cy="54" rx="7" ry="8" fill="#00e5ff"/><circle cx="59.5" cy="51.5" r="2" fill="#fff" opacity=".9"/></g>
+    <g id="eyeR"><ellipse cx="83" cy="54" rx="7" ry="8" fill="#00e5ff"/><circle cx="85.5" cy="51.5" r="2" fill="#fff" opacity=".9"/></g>
+    <rect x="22" y="43" width="9" height="22" rx="4.5" fill="url(#g1)"/>
+    <g id="waveArm"><rect x="112" y="26" width="9" height="26" rx="4.5" fill="url(#g1)"/></g>
+    <rect x="42" y="89" width="56" height="27" rx="12" fill="url(#g1)" opacity=".92"/>
+    <circle id="coreDot" cx="70" cy="102" r="8" fill="url(#core)"/>
+    <circle cx="70" cy="102" r="13" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity=".55"/>
+    <g id="holo" opacity=".55"><ellipse cx="70" cy="124" rx="46" ry="7" fill="none" stroke="#00e5ff" stroke-width="1.2" stroke-dasharray="9 7"/></g>
   </svg>
 </div>
 
 <script>
-/* ===== 机器人台词打字机 ===== */
-function typeInto(el, text, done){
-  el.textContent = ''; var k = 0;
-  (function tick(){ if (k <= text.length){ el.textContent = text.slice(0,k++); setTimeout(tick, 38); } else if (done) done(); })();
-}
-var botSay = document.getElementById('botSay');
-typeInto(botSay, '你好！我是小智 🤖 这台浏览器的 AI 管家。往下看，我给你介绍我的本领！');
+/* ===== 飞行小智：逐帧驱动——飞到不同版块接你、悬浮起伏、挥手、眨眼、眼神跟鼠标 ===== */
+(function(){
+  var comp = document.getElementById('companion');
+  var botSvg = document.getElementById('botSvg');
+  var waveArm = document.getElementById('waveArm');
+  var eyeL = document.getElementById('eyeL'), eyeR = document.getElementById('eyeR');
+  var coreDot = document.getElementById('coreDot');
+  var say = document.getElementById('compSay');
 
-/* ===== 眼神跟随鼠标 ===== */
-document.addEventListener('mousemove', function(e){
-  ['eyeL','eyeR'].forEach(function(id){
-    var eye = document.querySelector('.' + id) || document.getElementById(id);
-    if (!eye) return;
-    var r = eye.getBoundingClientRect();
-    var cx = r.left + r.width/2, cy = r.top + r.height/2;
-    var dx = e.clientX - cx, dy = e.clientY - cy, d = Math.hypot(dx,dy) || 1;
-    eye.style.transform = 'translate(' + (dx/d*3) + 'px,' + (dy/d*3) + 'px)';
-  });
-});
+  // 每个版块一个"停靠点"：滚到哪，小智就飞到哪侧接你
+  var spots = [
+    { sel:'#top',      fx:.74, fy:.42, text:'你好！我是小智 🤖 这台浏览器的 AI 管家。往下滚，我带你飞一圈！' },
+    { sel:'#features', fx:.86, fy:.30, text:'这些全是我包圆的活儿！你动嘴，我跑腿 💪' },
+    { sel:'#safe',     fx:.10, fy:.34, text:'放心！我没有服务器，你的数据只在你电脑和你自己的网盘里 🔒' },
+    { sel:'#models',   fx:.86, fy:.32, text:'模型随便换我都跑：免费白嫖 LongCat，流畅上 deepseek ⚡' },
+    { sel:'FOOT',      fx:.50, fy:.52, text:'还等什么？点「免费下载」，我们浏览器里见！🚀' }
+  ];
+  var curText = '', curSpot = spots[0];
+  var px = innerWidth * .74, py = innerHeight * .42;   // 当前位置（lerp 目标）
+  var mouse = { x:-999, y:-999 };
+  addEventListener('mousemove', function(e){ mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  function pickSpot(){
+    var y = scrollY + innerHeight * .5, pick = spots[0];
+    for (var i = 0; i < spots.length; i++){
+      var el = spots[i].sel === 'FOOT' ? document.querySelector('footer') : document.querySelector(spots[i].sel);
+      if (el && el.offsetTop <= y) pick = spots[i];
+    }
+    return pick;
+  }
+
+  var lastBlink = 0;
+  function frame(t){
+    var spot = pickSpot();
+    var tx = innerWidth * spot.fx - 105, ty = innerHeight * spot.fy - 40;
+    px += (tx - px) * .045; py += (ty - py) * .045;            // 平滑飞行
+    var bob = Math.sin(t/520) * 9;                              // 悬浮起伏
+    comp.style.transform = 'translate(' + (px + Math.sin(t/900)*5) + 'px,' + (py + bob) + 'px)';
+    waveArm.setAttribute('transform', 'rotate(' + Math.sin(t/280)*22 + ' 116 40)');   // 挥手
+    var coreS = 1 + Math.sin(t/300) * .25;                      // 核心脉冲
+    coreDot.setAttribute('r', 8 * coreS);
+    if (t - lastBlink > 2800 + Math.random()*1800){ lastBlink = t;  // 随机眨眼
+      [eyeL, eyeR].forEach(function(g){ g.style.opacity = 0; });
+      setTimeout(function(){ [eyeL, eyeR].forEach(function(g){ g.style.opacity = 1; }); }, 130);
+    }
+    // 眼神跟鼠标
+    var eyeBox = botSvg.getBoundingClientRect();
+    var cx = eyeBox.left + eyeBox.width/2, cy = eyeBox.top + 54;
+    var dx = mouse.x - cx, dy = mouse.y - cy, d = Math.hypot(dx,dy) || 1;
+    var ox = Math.max(-3.5, Math.min(3.5, dx/d*3.5)), oy = Math.max(-3, Math.min(3, dy/d*3));
+    eyeL.setAttribute('transform', 'translate(' + ox + ',' + oy + ')');
+    eyeR.setAttribute('transform', 'translate(' + ox + ',' + oy + ')');
+    // 台词切换（打字机）
+    if (spot.text !== curText){
+      curText = spot.text; say.textContent = '';
+      var k = 0;
+      (function tick(){ if (k <= curText.length){ say.textContent = curText.slice(0,k++); setTimeout(tick, 34); } })();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
 
 /* ===== 卡片滚动浮现 ===== */
 var io = new IntersectionObserver(function(es){
@@ -221,31 +241,6 @@ var io = new IntersectionObserver(function(es){
     io.unobserve(el); } });
 }, { threshold:.12 });
 document.querySelectorAll('.card').forEach(function(c){ io.observe(c); });
-
-/* ===== 滚动小智 ===== */
-(function(){
-  var guide = document.getElementById('guide'), say = document.getElementById('guideSay');
-  var hero = document.querySelector('.hero');
-  var talks = [
-    ['#features', '这些全是我包圆的活儿！你动嘴，我跑腿 💪'],
-    ['#safe',     '放心！我没有服务器，你的数据只在你电脑和你自己的网盘里 🔒'],
-    ['#models',   '模型随便换我都跑：免费白嫖 LongCat，流畅上 deepseek ⚡'],
-    ['FOOT',      '还等什么？点「免费下载」，我们浏览器里见！🚀']
-  ];
-  var cur = '', shown = false;
-  addEventListener('scroll', function(){
-    var heroBottom = hero.offsetTop + hero.offsetHeight;
-    var on = scrollY > heroBottom - innerHeight * .35;
-    guide.classList.toggle('on', on && scrollY > hero.offsetTop + 200);
-    var y = scrollY + innerHeight * .5, text = talks[0][1];
-    for (var i = 0; i < talks.length; i++){
-      var el = talks[i][0] === 'FOOT' ? document.querySelector('footer') : document.querySelector(talks[i][0]);
-      if (el && el.offsetTop <= y) text = talks[i][1];
-    }
-    if (on && text !== cur){ cur = text; typeInto(say, text); }
-    if (!on) { cur = ''; }
-  });
-})();
 
 /* ===== 下载按钮动态取最新版 ===== */
 fetch('https://api.github.com/repos/q404365631/liulanqi-update/releases/latest')
