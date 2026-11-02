@@ -7,50 +7,63 @@
 <meta name="description" content="AI浏览器：内置 AI 助手的 Windows 桌面浏览器。AI 记忆大脑、自动操作网页、全能表单、划词翻译、网盘加密备份。免费下载。">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  :root { --acc:#7c5cff; --acc2:#00e5ff; --bg:#05070f; --card:rgba(255,255,255,.04); --line:rgba(124,92,255,.22); }
+  :root { --acc:#7c5cff; --acc2:#00e5ff; --bg:#04060d; --card:rgba(255,255,255,.045); --line:rgba(124,92,255,.25); }
+  html { scroll-behavior:smooth; }
   body { font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif; color:#e8eaf6; background:var(--bg); line-height:1.75; overflow-x:hidden; }
-  /* 网格 + 光晕背景 */
-  body::before { content:''; position:fixed; inset:0; z-index:-2;
-    background:radial-gradient(600px 400px at 15% -5%, rgba(124,92,255,.28), transparent 60%),
-               radial-gradient(700px 500px at 90% 10%, rgba(0,229,255,.14), transparent 60%),
-               radial-gradient(500px 400px at 50% 110%, rgba(124,92,255,.12), transparent 60%); }
-  body::after { content:''; position:fixed; inset:0; z-index:-1; opacity:.35;
-    background-image:linear-gradient(rgba(124,92,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(124,92,255,.07) 1px, transparent 1px);
-    background-size:44px 44px; mask-image:radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%); }
-  .wrap { max-width:1080px; margin:0 auto; padding:0 22px; }
-  header { position:sticky; top:0; z-index:10; background:rgba(5,7,15,.72); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  #neural { position:fixed; inset:0; z-index:-3; }
+  .glowbg { position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:radial-gradient(650px 450px at 12% -8%, rgba(124,92,255,.30), transparent 62%),
+               radial-gradient(750px 520px at 92% 8%, rgba(0,229,255,.16), transparent 62%),
+               radial-gradient(520px 420px at 50% 112%, rgba(124,92,255,.14), transparent 62%); }
+  .gridbg { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.4;
+    background-image:linear-gradient(rgba(124,92,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(124,92,255,.08) 1px, transparent 1px);
+    background-size:46px 46px; mask-image:radial-gradient(ellipse at 50% 0%, #000 25%, transparent 72%); }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 22px; position:relative; }
+  header { position:sticky; top:0; z-index:20; background:rgba(4,6,13,.75); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
   header .wrap { display:flex; align-items:center; gap:24px; height:60px; }
   .logo { font-weight:bold; font-size:17px; background:linear-gradient(90deg,#a78bfa,#00e5ff); -webkit-background-clip:text; background-clip:text; color:transparent; letter-spacing:1px; }
   header a { color:#9aa0c3; text-decoration:none; font-size:14px; transition:color .2s; }
-  header a:hover { color:#fff; }
-  header .dl { margin-left:auto; background:linear-gradient(90deg,var(--acc),#5a4bd1); color:#fff; padding:8px 18px; border-radius:9px; font-weight:bold; box-shadow:0 0 18px rgba(124,92,255,.45); }
-  .hero { text-align:center; padding:88px 22px 64px; }
-  .badge { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:rgba(124,92,255,.08); border-radius:999px; padding:5px 16px; font-size:13px; color:#b8bdf0; font-family:Consolas,monospace; }
-  .badge i { width:8px; height:8px; border-radius:50%; background:#2ecc71; box-shadow:0 0 8px #2ecc71; animation:pulse 2s infinite; }
-  @keyframes pulse { 50% { opacity:.4; } }
-  .hero h1 { font-size:46px; margin:22px 0 16px; line-height:1.25; }
-  .hero h1 em { font-style:normal; background:linear-gradient(90deg,#a78bfa,#00e5ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .hero p { font-size:17px; color:#9aa0c3; max-width:660px; margin:0 auto 34px; }
-  .btn { display:inline-block; background:linear-gradient(90deg,var(--acc),#5a4bd1); color:#fff; text-decoration:none; font-size:17px; font-weight:bold; padding:15px 42px; border-radius:12px; box-shadow:0 0 26px rgba(124,92,255,.5); transition:transform .2s, box-shadow .2s; }
-  .btn:hover { transform:translateY(-2px); box-shadow:0 0 38px rgba(124,92,255,.75); }
-  .btn.ghost { background:transparent; color:#cfd3f5; border:1px solid var(--line); margin-left:14px; box-shadow:none; font-weight:normal; }
-  .btn.ghost:hover { border-color:var(--acc2); color:#fff; }
+  header a:hover { color:#fff; text-shadow:0 0 12px rgba(0,229,255,.8); }
+  header .dl { margin-left:auto; background:linear-gradient(90deg,var(--acc),#5a4bd1); color:#fff; padding:8px 18px; border-radius:9px; font-weight:bold; box-shadow:0 0 18px rgba(124,92,255,.5); }
+  /* ===== HERO ===== */
+  .hero { text-align:center; padding:84px 22px 56px; }
+  .badge { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:rgba(124,92,255,.1); border-radius:999px; padding:5px 16px; font-size:13px; color:#b8bdf0; font-family:Consolas,monospace; }
+  .badge i { width:8px; height:8px; border-radius:50%; background:#2ecc71; box-shadow:0 0 10px #2ecc71; animation:pulse 2s infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .hero h1 { font-size:48px; margin:24px 0 16px; line-height:1.25; }
+  .hero h1 em { font-style:normal; background:linear-gradient(90deg,#a78bfa,#00e5ff,#a78bfa); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:shine 4s linear infinite; }
+  @keyframes shine { to { background-position:200% center; } }
+  .hero p { font-size:17px; color:#9aa0c3; max-width:680px; margin:0 auto 36px; }
+  .btn { display:inline-block; background:linear-gradient(90deg,var(--acc),#5a4bd1); color:#fff; text-decoration:none; font-size:17px; font-weight:bold; padding:15px 44px; border-radius:12px; box-shadow:0 0 30px rgba(124,92,255,.55); transition:transform .2s, box-shadow .2s; }
+  .btn:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 0 46px rgba(124,92,255,.85); }
+  .btn.ghost { background:rgba(255,255,255,.03); color:#cfd3f5; border:1px solid var(--line); margin-left:14px; box-shadow:none; font-weight:normal; }
+  .btn.ghost:hover { border-color:var(--acc2); color:#fff; box-shadow:0 0 20px rgba(0,229,255,.3); }
   .ver { display:block; margin-top:16px; color:#6b7099; font-size:13px; font-family:Consolas,monospace; }
-  /* 终端演示卡 */
-  .term { max-width:620px; margin:44px auto 0; text-align:left; background:rgba(10,14,30,.85); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 10px 50px rgba(0,0,0,.5); }
+  /* 终端 */
+  .term { max-width:640px; margin:46px auto 0; text-align:left; background:rgba(8,12,26,.92); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 14px 60px rgba(0,0,0,.6), 0 0 40px rgba(124,92,255,.12); }
   .term .bar { display:flex; gap:6px; padding:10px 14px; background:rgba(255,255,255,.04); border-bottom:1px solid var(--line); }
-  .term .bar i { width:11px; height:11px; border-radius:50%; background:#3a3f5c; }
-  .term .bar i:first-child { background:#ff5f57; } .term .bar i:nth-child(2) { background:#febc2e; } .term .bar i:nth-child(3) { background:#28c840; }
-  .term .body { padding:18px 20px; font-family:Consolas,'Courier New',monospace; font-size:14px; min-height:120px; }
+  .term .bar i { width:11px; height:11px; border-radius:50%; }
+  .term .bar i:nth-child(1){ background:#ff5f57; } .term .bar i:nth-child(2){ background:#febc2e; } .term .bar i:nth-child(3){ background:#28c840; }
+  .term .body { padding:18px 22px; font-family:Consolas,'Courier New',monospace; font-size:14px; min-height:150px; }
   .term .u { color:#00e5ff; } .term .a { color:#a78bfa; } .term .c { color:#565d85; }
-  .cursor { display:inline-block; width:8px; height:16px; background:var(--acc2); vertical-align:-3px; animation:blink 1s infinite; }
+  .cursor { display:inline-block; width:9px; height:16px; background:var(--acc2); vertical-align:-3px; animation:blink 1s infinite; }
   @keyframes blink { 50% { opacity:0; } }
-  h2 { text-align:center; font-size:30px; margin:76px 0 6px; }
+  /* ===== 小人物解说员 ===== */
+  #guide { position:fixed; right:22px; bottom:22px; z-index:50; width:210px; text-align:center; pointer-events:none; transition:transform .4s; }
+  #guide .bubble { background:rgba(16,22,44,.94); border:1px solid var(--acc2); border-radius:14px; padding:10px 14px; font-size:13px; color:#dfe4ff; margin-bottom:10px; min-height:52px; box-shadow:0 0 24px rgba(0,229,255,.22); position:relative; }
+  #guide .bubble::after { content:''; position:absolute; bottom:-8px; right:34px; width:14px; height:14px; background:rgba(16,22,44,.94); border-right:1px solid var(--acc2); border-bottom:1px solid var(--acc2); transform:rotate(45deg); }
+  #guide svg { filter:drop-shadow(0 0 18px rgba(0,229,255,.35)); }
+  #guide .eye { animation:blinkEye 4.5s infinite; }
+  @keyframes blinkEye { 0%,94%,100% { transform:scaleY(1); } 96% { transform:scaleY(.08); } }
+  #guide .antenna i { animation:pulse 1.6s infinite; }
+  @media (max-width:860px){ #guide { display:none; } }
+  /* ===== 区块 ===== */
+  h2 { text-align:center; font-size:32px; margin:80px 0 6px; }
   h2 span { background:linear-gradient(90deg,#a78bfa,#00e5ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .sub { text-align:center; color:#8a90b8; margin-bottom:34px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; transition:transform .25s, border-color .25s, box-shadow .25s; }
-  .card:hover { transform:translateY(-4px); border-color:rgba(0,229,255,.45); box-shadow:0 8px 40px rgba(0,229,255,.12); }
+  .sub { text-align:center; color:#8a90b8; margin-bottom:36px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; perspective:1200px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; transition:border-color .25s, box-shadow .25s; transform-style:preserve-3d; will-change:transform; }
+  .card:hover { border-color:rgba(0,229,255,.5); box-shadow:0 10px 46px rgba(0,229,255,.14); }
   .card h3 { font-size:16.5px; margin-bottom:9px; color:#fff; }
   .card h3 b { color:var(--acc2); margin-right:6px; }
   .card p { font-size:14px; color:#9aa0c3; }
@@ -71,6 +84,9 @@
 </style>
 </head>
 <body>
+<canvas id="neural"></canvas>
+<div class="glowbg"></div><div class="gridbg"></div>
+
 <header><div class="wrap">
   <span class="logo">AI浏览器</span>
   <a href="#features">能力</a>
@@ -80,7 +96,7 @@
   <a class="dl" id="dlTop" href="https://github.com/q404365631/liulanqi-update/releases/latest">免费下载</a>
 </div></header>
 
-<section class="hero">
+<section class="hero" id="top">
   <span class="badge"><i></i>v0.3.1 · Windows 10/11 · 免费</span>
   <h1>会<em>帮你干活</em>的浏览器</h1>
   <p>内置 AI 助手的 Windows 浏览器：说一句话，它替你搜、替你点、替你总结。看过的网页它能记住，表单它帮你填，数据加密备份到你自己网盘。</p>
@@ -88,12 +104,7 @@
   <a class="btn ghost" href="https://github.com/q404365631/liulanqi-update">GitHub</a>
   <div class="term">
     <div class="bar"><i></i><i></i><i></i></div>
-    <div class="body" id="termBody">
-      <div class="c"># AI浏览器 · 实录</div>
-      <div><span class="u">你：</span>帮我在京东看看显卡价格</div>
-      <div><span class="a">AI：</span>好的，我先出个执行计划 ▸ 打开京东 ▸ 搜索显卡 ▸ 记录价格 ▸ 生成对比报告</div>
-      <div><span class="a">AI：</span>📊 已完成，报告如下…<span class="cursor"></span></div>
-    </div>
+    <div class="body" id="termBody"><div class="c"># AI浏览器 · 实录</div></div>
   </div>
 </section>
 
@@ -101,12 +112,12 @@
   <h2>AI 能帮你<span>做什么</span></h2>
   <p class="sub">不只是聊天——它有记性、会动手、能交活</p>
   <div class="grid">
-    <div class="card"><h3><b>🧠</b>AI 记忆大脑</h3><p>看过的网页自动存成本地摘要。可以问它"我之前看过的那个页面说了什么"，跨页面、跨会话回答，附当时的链接。好文章一键收进知识库。</p></div>
-    <div class="card"><h3><b>🤖</b>AI 自动操作 2.0</h3><p>说"帮我在XX搜一下"，它先出执行计划给你确认，然后跨网站自动点、自动填，把查到的价格/结论整理成表格报告。</p></div>
-    <div class="card"><h3><b>🪄</b>AI 全能表单</h3><p>资料卡填一次（加密存本机），以后任何网页的注册表单、收货信息，点一下自动填好。你检查后自己点提交。</p></div>
-    <div class="card"><h3><b>🌐</b>整页翻译 & 划词问答</h3><p>外文网页一键翻译成中文（悬停看原文）；选中文字即问即答；看不懂的报错截图发给 AI 解释。</p></div>
-    <div class="card"><h3><b>☁️</b>网盘加密备份</h3><p>书签、密码、AI 记忆用你的同步口令加密后，自动备份到<b style="color:#fff">你自己的百度网盘</b>，换电脑一键恢复。端到端加密，谁都看不到明文。</p></div>
-    <div class="card"><h3><b>🧹</b>标签整理 & 小人物</h3><p>标签开多了？AI 按主题自动分组上色、找出重复页面。角落里还有个会表情、会主动提醒的小人物助手。</p></div>
+    <div class="card tilt"><h3><b>🧠</b>AI 记忆大脑</h3><p>看过的网页自动存成本地摘要。可以问它"我之前看过的那个页面说了什么"，跨页面、跨会话回答，附当时的链接。好文章一键收进知识库。</p></div>
+    <div class="card tilt"><h3><b>🤖</b>AI 自动操作 2.0</h3><p>说"帮我在XX搜一下"，它先出执行计划给你确认，然后跨网站自动点、自动填，把查到的价格/结论整理成表格报告。</p></div>
+    <div class="card tilt"><h3><b>🪄</b>AI 全能表单</h3><p>资料卡填一次（加密存本机），以后任何网页的注册表单、收货信息，点一下自动填好。你检查后自己点提交。</p></div>
+    <div class="card tilt"><h3><b>🌐</b>整页翻译 & 划词问答</h3><p>外文网页一键翻译成中文（悬停看原文）；选中文字即问即答；看不懂的报错截图发给 AI 解释。</p></div>
+    <div class="card tilt"><h3><b>☁️</b>网盘加密备份</h3><p>书签、密码、AI 记忆用你的同步口令加密后，自动备份到<b style="color:#fff">你自己的百度网盘</b>，换电脑一键恢复。端到端加密，谁都看不到明文。</p></div>
+    <div class="card tilt"><h3><b>🧹</b>标签整理 & 小人物</h3><p>标签开多了？AI 按主题自动分组上色、找出重复页面。浏览器角落里还有个会表情、会主动提醒的小人物——就是本页右下角这位。</p></div>
   </div>
 </div>
 
@@ -139,7 +150,125 @@
   <br><br>AI浏览器 · 数据不属于我们，属于你
 </footer>
 
+<!-- 小人物解说员 -->
+<div id="guide">
+  <div class="bubble" id="guideSay">你好！我是小智，这台浏览器的管家 🤖</div>
+  <svg width="120" height="120" viewBox="0 0 120 120">
+    <defs>
+      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#00e5ff"/>
+      </linearGradient>
+    </defs>
+    <g class="antenna"><line x1="60" y1="18" x2="60" y2="30" stroke="url(#g1)" stroke-width="3"/><circle cx="60" cy="14" r="5" fill="#00e5ff"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="indefinite"/></circle></g>
+    <rect x="26" y="30" width="68" height="52" rx="16" fill="url(#g1)" opacity=".92"/>
+    <rect x="34" y="42" width="52" height="26" rx="12" fill="#05070f"/>
+    <circle class="eye" id="eyeL" cx="50" cy="55" r="6.5" fill="#00e5ff"/>
+    <circle class="eye" id="eyeR" cx="70" cy="55" r="6.5" fill="#00e5ff"/>
+    <rect x="20" y="46" width="8" height="20" rx="4" fill="url(#g1)"/>
+    <rect x="92" y="46" width="8" height="20" rx="4" fill="url(#g1)"/>
+    <rect x="38" y="86" width="18" height="16" rx="6" fill="url(#g1)" opacity=".85"/>
+    <rect x="64" y="86" width="18" height="16" rx="6" fill="url(#g1)" opacity=".85"/>
+    <rect x="48" y="92" width="24" height="6" rx="3" fill="#05070f" opacity=".55"/>
+  </svg>
+</div>
+
 <script>
+/* ===== 神经网络粒子背景 ===== */
+(function(){
+  var cv = document.getElementById('neural'), ctx = cv.getContext('2d');
+  var P = [], N = 70, mouse = { x:-999, y:-999 };
+  function size(){ cv.width = innerWidth; cv.height = innerHeight; }
+  size(); addEventListener('resize', size);
+  addEventListener('mousemove', function(e){ mouse.x = e.clientX; mouse.y = e.clientY; });
+  for (var i = 0; i < N; i++) P.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35, r: Math.random()*1.6+.6 });
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for (var i = 0; i < N; i++){
+      var p = P[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > cv.width) p.vx *= -1;
+      if (p.y < 0 || p.y > cv.height) p.vy *= -1;
+      var dm = Math.hypot(p.x-mouse.x, p.y-mouse.y);
+      if (dm < 150){ p.x += (p.x-mouse.x)/dm*.6; p.y += (p.y-mouse.y)/dm*.6; }
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7);
+      ctx.fillStyle = 'rgba(0,229,255,.55)'; ctx.fill();
+      for (var j = i+1; j < N; j++){
+        var q = P[j], d = Math.hypot(p.x-q.x, p.y-q.y);
+        if (d < 130){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle = 'rgba(124,92,255,' + (0.16*(1-d/130)) + ')'; ctx.stroke(); }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ===== 终端打字动画（循环） ===== */
+(function(){
+  var lines = [
+    ['u', '帮我在京东看看显卡价格'],
+    ['a', '好的，我先出个执行计划 ▸ 打开京东 ▸ 搜索显卡 ▸ 记录价格'],
+    ['a', '📊 报告已生成：3 款 RTX4070 均价 4299，最低 4199，附链接']
+  ];
+  var body = document.getElementById('termBody'), li = 0;
+  function typeLine(){
+    if (li >= lines.length){ li = 0; body.innerHTML = '<div class="c"># AI浏览器 · 实录</div>'; }
+    var who = lines[li][0] === 'u' ? 'u' : 'a', text = lines[li][1], prefix = who === 'u' ? '你：' : 'AI：';
+    var div = document.createElement('div');
+    div.innerHTML = '<span class="' + who + '">' + prefix + '</span><span class="txt"></span><span class="cursor"></span>';
+    body.appendChild(div);
+    var span = div.querySelector('.txt'), k = 0;
+    (function tick(){
+      if (k <= text.length){ span.textContent = text.slice(0, k++); setTimeout(tick, 42); }
+      else { div.querySelector('.cursor').remove(); li++; setTimeout(typeLine, 900); }
+    })();
+  }
+  setTimeout(typeLine, 800);
+})();
+
+/* ===== 小人物解说员：眼神跟鼠标 + 滚动换台词 ===== */
+(function(){
+  var eyeL = document.getElementById('eyeL'), eyeR = document.getElementById('eyeR');
+  var say = document.getElementById('guideSay');
+  addEventListener('mousemove', function(e){
+    var g = document.getElementById('guide').getBoundingClientRect();
+    var cx = g.left + 60, cy = g.top + 40;
+    var dx = e.clientX - cx, dy = e.clientY - cy, d = Math.hypot(dx, dy) || 1;
+    var ox = Math.max(-3.5, Math.min(3.5, dx/d*3.5)), oy = Math.max(-3, Math.min(3, dy/d*3));
+    eyeL.setAttribute('transform', 'translate(' + ox + ',' + oy + ')');
+    eyeR.setAttribute('transform', 'translate(' + ox + ',' + oy + ')');
+  });
+  var talks = [
+    ['#top',        '你好！我是小智，这台浏览器的管家 🤖 右下角下载后，我就住进你屏幕里！'],
+    ['#features',   '这些都是我会的！最得意的是自动操作——你动嘴，我跑腿～'],
+    ['#safe',       '放心！我没有服务器，你的数据只存在你电脑和你自己的网盘里 🔒'],
+    ['#models',     '模型随便换，我都能跑。免费的先白嫖 LongCat，流畅就上 deepseek～'],
+    ['footer',      '还等什么？点上面「免费下载」，我们浏览器里见！🚀']
+  ];
+  var cur = '';
+  addEventListener('scroll', function(){
+    var y = scrollY + innerHeight * .45, best = talks[0][1], key = talks[0][0];
+    for (var i = 0; i < talks.length; i++){
+      var el = talks[i][0] === 'footer' ? document.querySelector('footer') : document.querySelector(talks[i][0]);
+      if (el && el.offsetTop <= y){ best = talks[i][1]; }
+    }
+    if (best !== cur){ cur = best; say.style.opacity = 0;
+      setTimeout(function(){ say.textContent = cur; say.style.opacity = 1; }, 180); }
+  });
+  say.style.transition = 'opacity .18s';
+})();
+
+/* ===== 卡片 3D 倾斜 ===== */
+document.querySelectorAll('.tilt').forEach(function(card){
+  card.addEventListener('mousemove', function(e){
+    var r = card.getBoundingClientRect();
+    var x = (e.clientX - r.left)/r.width - .5, y = (e.clientY - r.top)/r.height - .5;
+    card.style.transform = 'rotateY(' + (x*7) + 'deg) rotateX(' + (-y*7) + 'deg)';
+  });
+  card.addEventListener('mouseleave', function(){ card.style.transform = ''; });
+});
+
+/* ===== 下载按钮动态取最新版 ===== */
 fetch('https://api.github.com/repos/q404365631/liulanqi-update/releases/latest')
   .then(r => r.json())
   .then(rel => {
@@ -149,10 +278,8 @@ fetch('https://api.github.com/repos/q404365631/liulanqi-update/releases/latest')
       document.getElementById('dlMain').href = exe.browser_download_url;
       var top = document.getElementById('dlTop'); if (top) top.href = exe.browser_download_url;
     }
-    if (rel.tag_name) {
-      var b = document.querySelector('.badge');
-      if (b) b.innerHTML = '<i></i>' + rel.tag_name + ' · Windows 10/11 · 免费';
-    }
+    var b = document.querySelector('.badge');
+    if (rel.tag_name && b) b.innerHTML = '<i></i>' + rel.tag_name + ' · Windows 10/11 · 免费';
   })
   .catch(() => {});
 </script>
