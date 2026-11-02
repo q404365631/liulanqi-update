@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI浏览器 — 会帮你干活的浏览器</title>
+<meta name="description" content="AI浏览器：内置 AI 助手的 Windows 桌面浏览器。AI 记忆大脑、自动操作网页、全能表单、划词翻译、网盘加密备份。免费下载。">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif; color:#2d3436; background:#fff; line-height:1.7; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 20px; }
+  header { position:sticky; top:0; background:rgba(255,255,255,.95); backdrop-filter:blur(8px); border-bottom:1px solid #eee; z-index:10; }
+  header .wrap { display:flex; align-items:center; gap:22px; height:58px; }
+  .logo { font-weight:bold; font-size:17px; color:#6c5ce7; }
+  header a { color:#555; text-decoration:none; font-size:14px; }
+  header a:hover { color:#6c5ce7; }
+  header .dl { margin-left:auto; background:#6c5ce7; color:#fff; padding:7px 16px; border-radius:8px; font-weight:bold; }
+  header .dl:hover { background:#5a4bd1; color:#fff; }
+  .hero { text-align:center; padding:72px 20px 56px; background:linear-gradient(160deg,#f4f1ff 0%,#fff 70%); }
+  .hero h1 { font-size:40px; margin-bottom:14px; }
+  .hero h1 em { font-style:normal; color:#6c5ce7; }
+  .hero p { font-size:17px; color:#555; max-width:640px; margin:0 auto 30px; }
+  .btn { display:inline-block; background:#6c5ce7; color:#fff; text-decoration:none; font-size:17px; font-weight:bold; padding:14px 38px; border-radius:12px; }
+  .btn:hover { background:#5a4bd1; }
+  .btn.ghost { background:#fff; color:#6c5ce7; border:2px solid #6c5ce7; margin-left:12px; font-weight:normal; }
+  .btn.ghost:hover { background:#f3f1ff; }
+  .ver { display:block; margin-top:14px; color:#999; font-size:13px; }
+  h2 { text-align:center; font-size:28px; margin:56px 0 8px; }
+  .sub { text-align:center; color:#777; margin-bottom:30px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; padding-bottom:10px; }
+  .card { border:1px solid #eee; border-radius:14px; padding:22px; background:#fdfdff; }
+  .card h3 { font-size:17px; margin-bottom:8px; color:#4834d4; }
+  .card p { font-size:14px; color:#555; }
+  .safe { background:#f8f9fb; border-radius:16px; padding:34px; margin:26px 0 10px; }
+  .safe h2 { margin-top:0; }
+  .safe ul { max-width:720px; margin:14px auto 0; }
+  .safe li { margin:8px 0; color:#444; font-size:15px; }
+  table { width:100%; border-collapse:collapse; margin:18px 0; font-size:14px; background:#fff; border-radius:10px; overflow:hidden; }
+  th,td { border:1px solid #e8e8ee; padding:9px 12px; text-align:left; }
+  th { background:#f3f1ff; color:#4834d4; }
+  code { background:#f0effa; padding:1px 6px; border-radius:4px; font-size:13px; }
+  .tip { background:#fff8e6; border-radius:10px; padding:12px 16px; font-size:13.5px; color:#7a5b00; }
+  footer { border-top:1px solid #eee; margin-top:60px; padding:26px 20px 40px; text-align:center; color:#999; font-size:13px; }
+  footer a { color:#6c5ce7; text-decoration:none; margin:0 8px; }
+  @media (max-width:640px){ .hero h1{font-size:30px;} .btn.ghost{margin-left:0;margin-top:10px;} }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="logo">AI浏览器</span>
+  <a href="#features">功能</a>
+  <a href="#safe">数据安全</a>
+  <a href="#models">模型选择</a>
+  <a href="baidu-backup-guide.md">备份教程</a>
+  <a class="dl" id="dlTop" href="https://github.com/q404365631/liulanqi-update/releases/latest">免费下载</a>
+</div></header>
+
+<section class="hero">
+  <h1>会<em>帮你干活</em>的浏览器</h1>
+  <p>内置 AI 助手的 Windows 浏览器：说一句话，它替你搜、替你点、替你总结。看过的网页它能记住，表单它帮你填，数据加密备份到你自己网盘。</p>
+  <a class="btn" id="dlMain" href="https://github.com/q404365631/liulanqi-update/releases/latest">⬇ 免费下载 Windows 版</a>
+  <a class="btn ghost" href="https://github.com/q404365631/liulanqi-update">GitHub 仓库</a>
+  <span class="ver" id="verInfo">Windows 10 / 11 64 位 ｜ 免费无广告</span>
+</section>
+
+<div class="wrap" id="features">
+  <h2>AI 能帮你做什么</h2>
+  <p class="sub">不只是聊天——它有记性、会动手、能交活</p>
+  <div class="grid">
+    <div class="card"><h3>🧠 AI 记忆大脑</h3><p>看过的网页自动存成本地摘要。可以问它"我之前看过的那个页面说了什么"，跨页面、跨会话回答，附当时的链接。好文章一键收进知识库。</p></div>
+    <div class="card"><h3>🤖 AI 自动操作 2.0</h3><p>说"帮我在XX搜一下"，它先出执行计划给你确认，然后跨网站自动点、自动填，把查到的价格/结论整理成表格报告。</p></div>
+    <div class="card"><h3>🪄 AI 全能表单</h3><p>资料卡填一次（加密存本机），以后任何网页的注册表单、收货信息，点一下自动填好。你检查后自己点提交。</p></div>
+    <div class="card"><h3>🌐 整页翻译 & 划词问答</h3><p>外文网页一键翻译成中文（悬停看原文）；选中文字即问即答；看不懂的报错截图发给 AI 解释。</p></div>
+    <div class="card"><h3>☁️ 网盘加密备份</h3><p>书签、密码、AI 记忆用你的同步口令加密后，自动备份到<b>你自己的百度网盘</b>，换电脑一键恢复。端到端加密，谁都看不到明文。</p></div>
+    <div class="card"><h3>🧹 标签整理 & 小人物</h3><p>标签开多了？AI 按主题自动分组上色、找出重复页面。角落里还有个会表情、会主动提醒的小人物助手。</p></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="safe" id="safe">
+    <h2>数据安全：没有服务器，就没有泄露</h2>
+    <ul>
+      <li>🔒 本应用<b>没有自己的服务器</b>，不注册账号，不收集你的浏览数据</li>
+      <li>🔑 密码、资料卡用系统级加密（Windows DPAPI）存在你电脑本地</li>
+      <li>☁️ 网盘备份以你自设口令做 <b>AES-256-GCM 端到端加密</b>，我们和百度都看不到明文</li>
+      <li>🗑 撤销授权即断开；所有本地数据可随时一键清除</li>
+    </ul>
+  </div>
+</div>
+
+<div class="wrap" id="models">
+  <h2>AI 模型怎么选（全网 11 家调研）</h2>
+  <p class="sub">设置 → AI 助手 → 点「📖 查看全网模型推荐」，可一键填入。此处为速查：</p>
+  <table>
+    <tr><th>档位</th><th>推荐</th><th>效果</th><th>花费</th></tr>
+    <tr><td>🆓 免费入门</td><td>美团 LongCat-Flash ｜ 智谱 glm-4-flash</td><td>对话/翻译/总结流畅；自动操作简单任务够用</td><td>全免费</td></tr>
+    <tr><td>💰 性价比（推荐）</td><td>deepseek-chat ｜ glm-5.3-flash（自带视觉）</td><td>自动操作流畅（每步几秒），复杂任务成功率高</td><td>每月几块钱</td></tr>
+    <tr><td>🏆 顶配</td><td>glm-5.3 ｜ Kimi K2.5/K3.1 Pro ｜ qwen-max</td><td>复杂跨站比价、长文档阅读最强</td><td>中-高</td></tr>
+  </table>
+  <div class="tip">💡 免费通道普遍限流（自动操作每步要等 30-60 秒）。想要流畅体验，推荐 deepseek-chat 这个级别——每月成本约等于一杯奶茶。</div>
+</div>
+
+<footer>
+  <a href="PRIVACY.md">隐私政策</a>｜<a href="TERMS.md">服务条款</a>｜<a href="baidu-backup-guide.md">网盘备份教程</a>｜<a href="https://github.com/q404365631/liulanqi-update">GitHub</a>
+  <br><br>AI浏览器 · Windows 10/11 64 位 · 免费使用<br>
+  本页面由 GitHub Pages 托管 · 数据不属于我们，属于你
+</footer>
+
+<script>
+// 动态取最新版本：下载按钮永远指向最新安装包
+fetch('https://api.github.com/repos/q404365631/liulanqi-update/releases/latest')
+  .then(r => r.json())
+  .then(rel => {
+    if (!rel || !rel.assets) return;
+    var exe = rel.assets.find(a => a.name.endsWith('.exe'));
+    if (exe) {
+      document.getElementById('dlMain').href = exe.browser_download_url;
+      var top = document.getElementById('dlTop'); if (top) top.href = exe.browser_download_url;
+    }
+    if (rel.tag_name) {
+      document.getElementById('verInfo').textContent = '最新版本 ' + rel.tag_name + ' · Windows 10/11 64 位 · 免费无广告';
+    }
+  })
+  .catch(() => {});
+</script>
+</body>
+</html>
