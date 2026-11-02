@@ -80,7 +80,7 @@
   .inner{max-width:1200px;margin:0 auto}
   .kicker{font-family:Consolas,monospace;font-size:11px;letter-spacing:5px;color:var(--cyan);margin-bottom:16px}
   .kicker::before{content:'[ '} .kicker::after{content:' ]'}
-  .headline{font-size:clamp(28px,3.6vw,46px);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.2;margin-bottom:18px}
+  .headline{font-size:clamp(28px,3.6vw,46px);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.26;margin-bottom:18px;padding-bottom:4px}
   .headline .grad{background:linear-gradient(96deg,var(--cyan),var(--violet));
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .lede{color:#7b8cb4;max-width:620px;margin-bottom:56px;font-size:15.5px}
@@ -226,7 +226,7 @@
 <footer>
   <a href="PRIVACY.md">隐私政策</a><a href="TERMS.md">服务条款</a><a href="baidu-backup-guide.md">备份教程</a><a href="https://github.com/q404365631/liulanqi-update">GITHUB</a>
   <br><br>AI BROWSER · 数据不属于我们，属于你
-  <br><span style="color:#141b2c">build v9</span>
+  <br><span style="color:#141b2c">build v10</span>
 </footer>
 
 <div id="bot">
@@ -375,14 +375,14 @@ document.getElementById('voice').onclick=function(){
   addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
 
   var stops=[
-    {s:'#top', fx:.055,fy:.74, t:'意识已接入。我是这台浏览器的管家，往下滚我带你看看。'},
+    {s:'#top', fx:.10,fy:.72, t:'意识已接入。我是这台浏览器的管家，往下滚我带你看看。'},
     {s:'#cap', fx:.83, fy:.72, t:'这六件事我全包了——你动嘴，我跑腿。'},
     {s:'#ui',  fx:.06, fy:.72, t:'这就是我住的地方，右边那块面板就是我。'},
     {s:'#sec', fx:.84, fy:.70, t:'我没有连任何服务器，你的数据只留在你机器上。'},
     {s:'#mdl', fx:.05, fy:.72, t:'模型随便换我都认，免费的也够用。'},
     {s:'FOOT', fx:.5,  fy:.80, t:'点那个发光的按钮，我们浏览器里见。'}
   ];
-  var px=innerWidth*.055,py=innerHeight*.74,cur=null,blink=0;
+  var px=innerWidth*.10,py=innerHeight*.72,cur=null,blink=0;
   function pickStop(){
     var y=scrollY+innerHeight*.52,p=stops[0];
     for(var i=0;i<stops.length;i++){
@@ -393,7 +393,7 @@ document.getElementById('voice').onclick=function(){
   }
   (function frame(now){
     var sp=pickStop();
-    var tx=innerWidth*sp.fx-95, ty=innerHeight*sp.fy-30;
+    var tx=Math.max(8,Math.min(innerWidth-200,innerWidth*sp.fx-95)), ty=innerHeight*sp.fy-30;   // 夹住边界，防止被切
     px+=(tx-px)*.045; py+=(ty-py)*.045;
     bot.style.transform='translate('+(px+Math.sin(now/1200)*5)+'px,'+(py+Math.sin(now/620)*9)+'px)';
     arm.setAttribute('transform','rotate('+Math.sin(now/300)*26+' 96 30)');
