@@ -69,7 +69,8 @@
   footer a:hover { color:#fff; }
   .build { font-family:Consolas,monospace; color:#3d4470; font-size:11px; margin-top:8px; }
   /* ===== 飞行小智（JS 逐帧驱动，会飞、会浮、会眨眼） ===== */
-  #companion { position:fixed; z-index:70; width:230px; pointer-events:none; will-change:transform; }
+  /* 关键：fixed 必须给 top/left:0，否则浏览器用它在文档流里的原始位置（body 末尾）→ 会跑到视口外 */
+  #companion { position:fixed; top:0; left:0; z-index:70; width:200px; pointer-events:none; will-change:transform; }
   #companion .bubble { background:rgba(16,22,44,.94); border:1px solid var(--acc2); border-radius:14px; padding:11px 15px; font-size:13.5px; color:#dfe4ff; min-height:56px; box-shadow:0 0 28px rgba(0,229,255,.28); margin-bottom:10px; position:relative; }
   #companion .bubble::after { content:''; position:absolute; bottom:-9px; left:38px; width:14px; height:14px; background:rgba(16,22,44,.94); border-right:1px solid var(--acc2); border-bottom:1px solid var(--acc2); transform:rotate(45deg); }
   #companion svg { filter:drop-shadow(0 14px 34px rgba(124,92,255,.5)); display:block; margin:0 auto; }
@@ -140,7 +141,7 @@
 <footer>
   <a href="PRIVACY.md">隐私政策</a>｜<a href="TERMS.md">服务条款</a>｜<a href="baidu-backup-guide.md">网盘备份教程</a>｜<a href="https://github.com/q404365631/liulanqi-update">GitHub</a>
   <br><br>AI浏览器 · 数据不属于我们，属于你
-  <div class="build">site build v5</div>
+  <div class="build">site build v6</div>
 </footer>
 
 <!-- 飞行小智：JS 逐帧驱动 -->
@@ -194,10 +195,13 @@
   addEventListener('mousemove', function(e){ mouse.x = e.clientX; mouse.y = e.clientY; });
 
   function pickSpot(){
+    // 用 getBoundingClientRect + scrollY 算绝对位置：offsetTop 会被 position:relative 的父元素干扰
     var y = scrollY + innerHeight * .5, pick = spots[0];
     for (var i = 0; i < spots.length; i++){
       var el = spots[i].sel === 'FOOT' ? document.querySelector('footer') : document.querySelector(spots[i].sel);
-      if (el && el.offsetTop <= y) pick = spots[i];
+      if (!el) continue;
+      var absTop = el.getBoundingClientRect().top + scrollY;
+      if (absTop <= y) pick = spots[i];
     }
     return pick;
   }
