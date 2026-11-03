@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>方案 P1 · 粒子聚字</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#03000f;color:#fff;font-family:'Inter','PingFang SC',sans-serif;overflow-x:hidden;line-height:1.7}
+#cv{position:fixed;inset:0;z-index:0}
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%,transparent 25%,rgba(3,0,15,.7) 65%,rgba(3,0,15,.97) 100%)}
+
+/* 入场遮罩：动画播完才允许滚动 */
+#lock{position:fixed;inset:0;z-index:200;background:#03000f;transition:opacity .8s}
+#lock.gone{opacity:0;pointer-events:none}
+#hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:210;
+  font-family:Consolas,monospace;font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.4);
+  transition:opacity .6s}
+#hint.gone{opacity:0}
+
+.hero{position:relative;z-index:10;height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;padding:0 24px 90px;text-align:center}
+.hero .txt{opacity:0;transform:translateY(24px);transition:1s cubic-bezier(.2,.7,.2,1)}
+.hero .txt.in{opacity:1;transform:none}
+.hero h1{font-size:clamp(30px,4vw,50px);font-weight:900;letter-spacing:-1.5px;margin-bottom:18px;line-height:1.15}
+.hero h1 .g{background:linear-gradient(110deg,#a78bfa,#22d3ee,#f472b6);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:rgba(255,255,255,.5);max-width:520px;margin:0 auto 32px;font-size:15px}
+.btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{padding:15px 40px;font-size:15px;font-weight:800;color:#fff;text-decoration:none;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:13px;
+  box-shadow:0 8px 40px rgba(124,58,237,.5);transition:.3s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 12px 60px rgba(124,58,237,.85)}
+.btn2{padding:14px 32px;font-size:14px;color:rgba(255,255,255,.65);text-decoration:none;
+  border:1px solid rgba(255,255,255,.14);border-radius:13px;transition:.3s}
+.btn2:hover{border-color:rgba(255,255,255,.35);color:#fff}
+
+.sec{position:relative;z-index:10;padding:110px 28px}
+.in{max-width:1120px;margin:0 auto}
+.kick{font-size:11px;font-weight:800;letter-spacing:3px;color:#22d3ee;margin-bottom:12px;text-transform:uppercase}
+h2{font-size:clamp(26px,3.6vw,42px);font-weight:900;letter-spacing:-1.5px;margin-bottom:12px;line-height:1.2}
+h2 .g{background:linear-gradient(110deg,#a78bfa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.desc{color:rgba(255,255,255,.45);max-width:520px;margin-bottom:44px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;
+  padding:30px 26px;backdrop-filter:blur(12px);transition:.35s}
+.card:hover{border-color:rgba(124,58,237,.45);transform:translateY(-5px);box-shadow:0 20px 60px rgba(124,58,237,.15)}
+.card .n{font-size:10px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.25);margin-bottom:12px}
+.card .ic{font-size:24px;margin-bottom:12px}
+.card h3{font-size:17px;font-weight:800;margin-bottom:8px}
+.card p{font-size:13.5px;color:rgba(255,255,255,.45)}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.shot{border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden}
+.shot img{width:100%;display:block;filter:brightness(.88)}
+footer{position:relative;z-index:10;border-top:1px solid rgba(255,255,255,.06);
+  padding:36px 28px 50px;text-align:center;font-size:11px;color:rgba(255,255,255,.25)}
+footer a{color:rgba(255,255,255,.35);text-decoration:none;margin:0 12px}
+@media(max-width:800px){.shots{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div class="vig"></div>
+<div id="lock"><div id="hint">SYSTEM INITIALIZING…</div></div>
+
+<section class="hero">
+  <div class="txt" id="heroTxt">
+    <h1>AI 不是插件<br><span class="g">它就是浏览器</span></h1>
+    <p>说一句话，它替你搜、替你点、替你总结。看过的网页它记得住，表单它帮你填，数据加密后只进你自己的网盘。</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/q404365631/liulanqi-update/releases/latest">⬇ 免费下载</a>
+      <a class="btn2" href="https://github.com/q404365631/liulanqi-update">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<div class="sec"><div class="in">
+  <div class="kick">Capabilities</div>
+  <h2>它能替你干的<span class="g">六件事</span></h2>
+  <p class="desc">不是陪你聊天，是把活干完再回来复命。</p>
+  <div class="grid">
+    <div class="card"><div class="n">01 / AGENT</div><div class="ic">🤖</div><h3>自己上网办事</h3><p>先出执行计划给你确认，然后跨网站自己点、自己填，最后整理成表格报告。</p></div>
+    <div class="card"><div class="n">02 / MEMORY</div><div class="ic">🧠</div><h3>记住你看过的一切</h3><p>看过的网页自动存成本地摘要，跨会话回答，附当时的链接。</p></div>
+    <div class="card"><div class="n">03 / AUTOFILL</div><div class="ic">🪄</div><h3>表单替你填</h3><p>资料卡填一次，之后任何网站的注册、收货表单点一下自动填好。</p></div>
+    <div class="card"><div class="n">04 / TRANSLATE</div><div class="ic">🌐</div><h3>整页翻译</h3><p>外文网页一键翻成中文，选中文字即问即答。</p></div>
+    <div class="card"><div class="n">05 / BACKUP</div><div class="ic">☁️</div><h3>网盘加密备份</h3><p>用你的口令 AES-256 加密，自动存进你自己的百度网盘。</p></div>
+    <div class="card"><div class="n">06 / ORGANIZER</div><div class="ic">🧹</div><h3>标签整理</h3><p>按主题自动分组上色、揪出重复页面。</p></div>
+  </div>
+</div></div>
+
+<div class="sec"><div class="in">
+  <div class="kick">Interface</div>
+  <h2>真实界面，<span class="g">不是效果图</span></h2>
+  <div class="shots">
+    <div class="shot"><img src="../images/screenshot-main.png" alt=""></div>
+    <div class="shot"><img src="../images/screenshot-ai.png" alt=""></div>
+  </div>
+</div></div>
+
+<footer>
+  <a href="../PRIVACY.md">隐私政策</a><a href="../TERMS.md">服务条款</a><a href="https://github.com/q404365631/liulanqi-update">GitHub</a>
+  <br><br>方案 P1 · 粒子聚字 · 全部内容与 A-J 相同，只有入场动画不同
+</footer>
+
+<script>
+/* ================= 粒子聚字入场 ================= */
+(function(){
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var W, H, DPR = Math.min(devicePixelRatio || 1, 2);
+  function rs(){ W = innerWidth; H = innerHeight;
+    cv.width = W*DPR; cv.height = H*DPR; cv.style.width = W+'px'; cv.style.height = H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0); }
+  rs(); addEventListener('resize', function(){ rs(); build(); });
+
+  var TEXT = 'AI 浏览器';
+  var particles = [];
+  var phase = 'gather';     // gather → hold → disperse
+  var phaseT0 = 0;
+
+  /* 1. 采样文字像素作为粒子目标 */
+  function build(){
+    particles = [];
+    var off = document.createElement('canvas');
+    var fs = Math.min(W * 0.13, 150);
+    off.width = W; off.height = H;
+    var o = off.getContext('2d');
+    o.fillStyle = '#fff';
+    o.font = '900 ' + fs + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    o.textAlign = 'center';
+    o.textBaseline = 'middle';
+    o.fillText(TEXT, W/2, H*0.42 - 40);
+
+    var data = o.getImageData(0, 0, W, H).data;
+    var gap = 3;
+    for (var y = 0; y < H; y += gap){
+      for (var x = 0; x < W; x += gap){
+        var idx = (y*W + x) * 4;
+        if (data[idx+3] > 128){
+          particles.push({
+            tx: x, ty: y,                     // 目标
+            x: Math.random()*W,               // 起点：随机散布
+            y: Math.random()*H,
+            vx: 0, vy: 0,
+            size: Math.random()*1.4 + 0.6,
+            hue: Math.random(),
+            delay: Math.random()*0.45
+          });
+        }
+      }
+    }
+    phaseT0 = performance.now();
+    phase = 'gather';
+  }
+  build();
+
+  /* 2. 鼠标斥力 */
+  var mx = -9999, my = -9999;
+  addEventListener('mousemove', function(e){ mx = e.clientX; my = e.clientY; });
+
+  /* 3. 星尘 */
+  var dust = [];
+  for (var i = 0; i < 160; i++) dust.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.2+.2, a:Math.random()});
+
+  var lock = document.getElementById('lock');
+  var hint = document.getElementById('hint');
+  var heroTxt = document.getElementById('heroTxt');
+  var unlocked = false;
+
+  function frame(now){
+    var el = (now - phaseT0) / 1000;
+    ctx.clearRect(0, 0, W, H);
+
+    /* 星尘 */
+    for (var d = 0; d < dust.length; d++){
+      var p = dust[d];
+      p.a += 0.008; if (p.a > 1) p.a = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7);
+      ctx.fillStyle = 'rgba(160,190,255,' + (p.a*0.35) + ')'; ctx.fill();
+    }
+
+    if (phase === 'gather'){
+      var progress = Math.min(1, el / 1.6);
+      var ease = 1 - Math.pow(1 - progress, 4);
+
+      for (var i2 = 0; i2 < particles.length; i2++){
+        var pt = particles[i2];
+        var t = Math.max(0, Math.min(1, (ease - pt.delay) / (1 - pt.delay)));
+        t = 1 - Math.pow(1 - t, 3);   // 每个粒子单独缓动
+
+        // 目标位置
+        var gx = pt.tx, gy = pt.ty;
+        // 起点（加了圆周分布，看起来从四面八方飞来）
+        var ang = (pt.tx + pt.ty) * 0.01;
+        var sx = pt.tx + Math.cos(ang) * W * 0.7;
+        var sy = pt.ty + Math.sin(ang) * H * 0.7;
+
+        pt.x = sx + (gx - sx) * t;
+        pt.y = sy + (gy - sy) * t;
+
+        // 鼠标斥力（只在聚拢后）
+        if (t > 0.9){
+          var ddx = pt.x - mx, ddy = pt.y - my;
+          var dd = Math.sqrt(ddx*ddx + ddy*ddy);
+          if (dd < 90 && dd > 0){
+            var force = (1 - dd/90) * 26;
+            pt.x += ddx/dd * force;
+            pt.y += ddy/dd * force;
+          }
+        }
+
+        // 颜色：从白 → 紫/青/粉渐变
+        var col;
+        if (t < 0.5) col = 'rgba(255,255,255,' + (0.3 + t*1.2) + ')';
+        else {
+          var h = pt.hue;
+          var c = h < 0.4 ? '167,139,250' : (h < 0.75 ? '34,211,238' : '244,114,182');
+          col = 'rgba(' + c + ',' + (0.55 + t*0.45) + ')';
+        }
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size * (0.4 + t*0.8), 0, 7);
+        ctx.fillStyle = col; ctx.fill();
+      }
+
+      // 文字成形瞬间的光晕
+      if (progress > 0.75){
+        var glowA = (progress - 0.75) / 0.25;
+        var g = ctx.createRadialGradient(W/2, H*0.42-40, 0, W/2, H*0.42-40, W*0.45);
+        g.addColorStop(0, 'rgba(124,58,237,' + (0.16*glowA) + ')');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      }
+
+      // 完成 → 掀开遮罩
+      if (progress >= 1 && !unlocked){
+        unlocked = true;
+        phase = 'hold';
+        setTimeout(function(){
+          lock.classList.add('gone');
+          hint.classList.add('gone');
+          heroTxt.classList.add('in');
+          particleDisperse();
+        }, 900);
+      }
+    }
+    else if (phase === 'hold' || phase === 'disperse'){
+      // 散开成环绕星云
+      for (var i3 = 0; i3 < particles.length; i3++){
+        var p3 = particles[i3];
+        if (phase === 'disperse'){
+          var cx = W/2, cy = H*0.42-40;
+          var ang2 = Math.atan2(p3.y - cy, p3.x - cx);
+          var rad = Math.sqrt(Math.pow(p3.x-cx,2) + Math.pow(p3.y-cy,2));
+          var targetRad = rad * 2.6 + 180;
+          var ntx = cx + Math.cos(ang2) * targetRad;
+          var nty = cy + Math.sin(ang2) * targetRad * 0.7;
+          p3.x += (ntx - p3.x) * 0.012;
+          p3.y += (nty - p3.y) * 0.012;
+          p3.size *= 0.997;
+        }
+        ctx.beginPath(); ctx.arc(p3.x, p3.y, Math.max(0.2, p3.size*0.8), 0, 7);
+        var hh = p3.hue;
+        var cc = hh < 0.4 ? '167,139,250' : (hh < 0.75 ? '34,211,238' : '244,114,182');
+        ctx.fillStyle = 'rgba(' + cc + ',0.35)'; ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  function particleDisperse(){
+    phase = 'disperse';
+    // 保证首屏始终可滚动
+    document.body.style.overflow = 'auto';
+  }
+
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
