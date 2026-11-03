@@ -3,373 +3,321 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI浏览器 — The AI Browser</title>
+<title>AI浏览器 — 意识已接入</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#030014;--txt:#fff;--dim:rgba(255,255,255,.55);--acc:#7c3aed;--acc2:#06b6d4;--line:rgba(255,255,255,.08)}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:'Inter','Noto Sans SC',sans-serif;line-height:1.7;overflow-x:hidden}
-::selection{background:rgba(124,58,237,.4)}
+body{background:#000308;color:#fff;font-family:'Inter','PingFang SC',sans-serif;overflow-x:hidden;line-height:1.7}
+#cv{position:fixed;inset:0;z-index:0}
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,transparent 22%,rgba(0,3,8,.75) 60%,rgba(0,3,8,.98) 100%)}
 
-#three-bg{position:fixed;inset:0;z-index:0}
-.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:radial-gradient(ellipse at 50% 30%,transparent 20%,rgba(3,0,20,.6) 60%,rgba(3,0,20,.95) 100%)}
-.noise{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.04;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#lock{position:fixed;inset:0;z-index:200;background:#000308;display:flex;align-items:center;
+  justify-content:center;transition:opacity 1s}
+#lock.gone{opacity:0;pointer-events:none}
+#loader{text-align:center;font-family:Consolas,monospace}
+#loader .bar{width:min(380px,70vw);height:2px;background:rgba(0,245,255,.15);margin:22px auto 0;overflow:hidden}
+#loader .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#00f5ff,#8b3dff);
+  box-shadow:0 0 16px #00f5ff;transition:width .1s linear}
+#loader .lbl{font-size:11px;letter-spacing:4px;color:rgba(0,245,255,.7);margin-bottom:6px}
+#loader .pct{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.3);margin-top:10px}
 
-.wrap{max-width:1200px;margin:0 auto;padding:0 28px;position:relative;z-index:5}
-
-/* ===== NAV ===== */
-header{position:fixed;top:0;left:0;right:0;z-index:100;height:72px;display:flex;align-items:center;
-  padding:0 40px;background:rgba(3,0,20,.65);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
-.logo{font-weight:900;font-size:16px;letter-spacing:-.5px;color:#fff;display:flex;align-items:center;gap:10px}
-.logo .dot{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--acc),var(--acc2));
-  display:flex;align-items:center;justify-content:center;font-size:12px}
-header nav{display:flex;gap:32px;margin-left:auto;margin-right:36px}
-header nav a{color:rgba(255,255,255,.55);text-decoration:none;font-size:13.5px;font-weight:500;transition:.25s}
-header nav a:hover{color:#fff}
-.cta-sm{padding:9px 22px;font-size:13px;font-weight:700;color:#fff;text-decoration:none;
-  background:linear-gradient(135deg,var(--acc),#a855f7);border-radius:9px;transition:.3s;
-  box-shadow:0 4px 20px rgba(124,58,237,.4)}
-.cta-sm:hover{box-shadow:0 6px 30px rgba(124,58,237,.7);transform:translateY(-1px)}
-
-/* ===== HERO ===== */
-.hero{position:relative;z-index:5;min-height:100vh;display:flex;align-items:center;justify-content:center;
-  text-align:center;padding:120px 24px 80px}
-.hero-inner{max-width:800px}
-.badge-line{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:1px;
-  color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12);border-radius:100px;
-  padding:8px 20px;margin-bottom:36px;background:rgba(255,255,255,.04);backdrop-filter:blur(8px)}
-.badge-line .pulse{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px #4ade80;
-  animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{50%{opacity:.4;transform:scale(.8)}}
-h1{font-size:clamp(44px,7vw,88px);line-height:1.05;font-weight:900;letter-spacing:-3px;color:#fff;margin-bottom:24px}
-h1 .grad{background:linear-gradient(110deg,#a78bfa 5%,#22d3ee 50%,#f472b6 95%);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-h1 .thin{display:block;font-size:.38em;font-weight:400;letter-spacing:6px;color:rgba(255,255,255,.35);
-  margin-top:20px;font-family:Consolas,monospace}
-.hero p{font-size:17px;color:rgba(255,255,255,.6);max-width:580px;margin:0 auto 44px}
+.hero{position:relative;z-index:10;height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:0 24px}
+.hero .txt{opacity:0;transform:scale(.94);transition:1.2s cubic-bezier(.16,1,.3,1)}
+.hero .txt.in{opacity:1;transform:none}
+.hero h1{font-size:clamp(32px,5.6vw,72px);font-weight:900;letter-spacing:-2.5px;line-height:1.08;margin-bottom:20px}
+.hero h1 .g{background:linear-gradient(110deg,#00f5ff,#8b3dff 55%,#ff2d95);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 40px rgba(0,245,255,.4))}
+.hero p{color:rgba(255,255,255,.55);max-width:540px;margin:0 auto 36px;font-size:16px}
 .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.btn-primary{padding:17px 44px;font-size:16px;font-weight:800;color:#fff;text-decoration:none;
-  background:linear-gradient(135deg,var(--acc),#a855f7);border-radius:14px;transition:.3s;
-  box-shadow:0 8px 40px rgba(124,58,237,.5),inset 0 1px 0 rgba(255,255,255,.2)}
-.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 60px rgba(124,58,237,.8)}
-.btn-secondary{padding:15px 34px;font-size:15px;font-weight:600;color:rgba(255,255,255,.7);
-  text-decoration:none;border:1px solid rgba(255,255,255,.15);border-radius:14px;transition:.3s;
-  background:rgba(255,255,255,.04);backdrop-filter:blur(8px)}
-.btn-secondary:hover{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.08)}
+.btn{padding:17px 46px;font-size:16px;font-weight:800;color:#000308;text-decoration:none;
+  background:linear-gradient(120deg,#00f5ff,#8ffcff);border-radius:4px;
+  clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);
+  box-shadow:0 0 44px rgba(0,245,255,.6);transition:.3s}
+.btn:hover{box-shadow:0 0 80px rgba(0,245,255,1);transform:translateY(-3px)}
+.btn2{padding:16px 34px;font-size:14px;color:rgba(0,245,255,.85);text-decoration:none;
+  border:1px solid rgba(0,245,255,.3);font-family:Consolas,monospace;letter-spacing:1px;transition:.3s}
+.btn2:hover{border-color:#00f5ff;background:rgba(0,245,255,.07)}
 
-/* ===== SCROLL CARDS ===== */
-.sec{position:relative;z-index:5;padding:120px 28px}
-.sec .inner{max-width:1200px;margin:0 auto}
-.kicker{font-size:11px;font-weight:800;letter-spacing:3px;color:var(--acc2);margin-bottom:14px;text-transform:uppercase}
-.kicker::before{content:'// '}
-.sec-title{font-size:clamp(28px,4vw,48px);font-weight:900;letter-spacing:-1.5px;color:#fff;margin-bottom:14px;line-height:1.15}
-.sec-title .grad{background:linear-gradient(110deg,#a78bfa,#22d3ee,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sec-desc{color:rgba(255,255,255,.5);max-width:540px;font-size:15.5px;margin-bottom:56px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
-.gcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:20px;
-  padding:36px 32px;transition:.4s;backdrop-filter:blur(12px);position:relative;overflow:hidden}
-.gcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(124,58,237,.6),rgba(34,211,238,.6),transparent);
-  opacity:0;transition:opacity .4s}
-.gcard:hover::before{opacity:1}
-.gcard:hover{border-color:rgba(124,58,237,.4);transform:translateY(-6px);
-  box-shadow:0 24px 80px rgba(0,0,0,.5),0 0 40px rgba(124,58,237,.1)}
-.gcard .n{font-size:10px;font-weight:800;letter-spacing:2.5px;color:rgba(255,255,255,.2);margin-bottom:16px;font-family:Consolas,monospace}
-.gcard .ic{font-size:28px;margin-bottom:16px}
-.gcard h3{font-size:19px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.3px}
-.gcard p{font-size:14px;color:rgba(255,255,255,.5)}
-
-/* ===== 对比表 ===== */
-.cmpwrap{border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;
-  background:rgba(255,255,255,.03);backdrop-filter:blur(12px)}
-.cmp{width:100%;border-collapse:collapse;font-size:14px}
-.cmp th{padding:16px 24px;text-align:left;font-size:11px;font-weight:800;letter-spacing:2px;
-  color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.08);text-transform:uppercase}
-.cmp td{padding:17px 24px;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.5)}
-.cmp td:first-child{color:#fff;font-weight:600}
-.cmp .y{color:#4ade80;font-weight:700}.cmp .n2{color:rgba(255,255,255,.2)}
-.cmp tr:hover td{background:rgba(124,58,237,.06)}
-
-/* ===== 界面截图 ===== */
-.shots{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.shot{border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;
-  background:rgba(255,255,255,.03);backdrop-filter:blur(12px)}
-.shot img{width:100%;display:block;filter:brightness(.88) contrast(1.05);transition:.5s}
-.shot:hover img{filter:brightness(1.05);transform:scale(1.02)}
-.shot .cap{position:absolute;bottom:0;left:0;right:0;padding:12px 20px;font-size:10px;
-  font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.4);text-transform:uppercase;
-  background:linear-gradient(transparent,rgba(3,0,20,.95))}
-
-/* ===== 模型表 ===== */
-.mtxwrap{border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;
-  background:rgba(255,255,255,.03);backdrop-filter:blur(12px)}
-.mtx{width:100%;border-collapse:collapse;font-size:13.5px}
-.mtx th{padding:16px 24px;text-align:left;font-size:11px;font-weight:800;letter-spacing:2px;
-  color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.08);text-transform:uppercase}
-.mtx td{padding:17px 24px;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.5)}
-.mtx td b{color:#fff;font-weight:700}
-.mtx tr:hover td{background:rgba(124,58,237,.06)}
-
-/* ===== FAQ ===== */
-.faq{max-width:720px}
-.qa{border-bottom:1px solid rgba(255,255,255,.06);padding:22px 0}
-.qa:last-child{border:0}
-.qa .q{font-size:16.5px;font-weight:700;color:#fff;cursor:pointer;display:flex;
-  justify-content:space-between;align-items:center;gap:20px}
-.qa .q span{color:var(--acc2);font-size:20px;font-weight:300;transition:.3s;font-family:Consolas,monospace}
-.qa.open .q span{transform:rotate(45deg)}
-.qa .a2{max-height:0;overflow:hidden;transition:max-height .4s ease;color:rgba(255,255,255,.5);font-size:14px}
-.qa.open .a2{max-height:220px;padding-top:14px}
-
-/* ===== 小智 ===== */
-#bot{position:fixed;right:28px;bottom:28px;z-index:80;width:200px;text-align:center}
-#bot .say{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.4);backdrop-filter:blur(16px);
-  border-radius:14px;padding:12px 16px;font-size:12.5px;color:#e0d5ff;margin-bottom:10px;min-height:48px;
-  line-height:1.55;font-weight:500}
-#bot svg{width:140px;height:auto;animation:bob 4s ease-in-out infinite;
-  filter:drop-shadow(0 8px 32px rgba(124,58,237,.5))}
-@keyframes bob{50%{transform:translateY(-12px)}}
-#bot .eye{animation:blink 4s infinite}
-@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.05)}}
-#bot .arm{animation:wave 2.5s ease-in-out infinite;transform-origin:97px 27px}
-@keyframes wave{0%,100%{transform:rotate(0)}30%{transform:rotate(-28deg)}60%{transform:rotate(12deg)}}
-#bot .holo{width:100px;height:10px;margin:6px auto 0;border-radius:50%;
-  background:radial-gradient(ellipse,rgba(124,58,237,.4),transparent 70%);animation:holo 3s ease-in-out infinite}
-@keyframes holo{50%{opacity:.3;transform:scaleX(.65)}}
-@media(max-width:860px){#bot{display:none}}
-
-/* ===== FINAL CTA ===== */
-.final{text-align:center;padding:140px 28px;position:relative;z-index:5}
-.final h2{font-size:clamp(30px,4.5vw,56px);font-weight:900;letter-spacing:-2px;color:#fff;margin-bottom:16px}
-.final h2 .grad{background:linear-gradient(110deg,#a78bfa,#22d3ee,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
-.final p{color:rgba(255,255,255,.5);margin-bottom:48px;font-size:16px}
-.final .primary{padding:20px 56px;font-size:17px;font-weight:800;color:#fff;text-decoration:none;
-  background:linear-gradient(135deg,var(--acc),#a855f7);border-radius:16px;transition:.3s;
-  box-shadow:0 8px 50px rgba(124,58,237,.5),inset 0 1px 0 rgba(255,255,255,.2)}
-.final .primary:hover{transform:translateY(-3px);box-shadow:0 14px 70px rgba(124,58,237,.8)}
-.final .platform{margin-top:22px;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase}
-
-footer{position:relative;z-index:5;border-top:1px solid rgba(255,255,255,.06);padding:40px 32px 56px;
-  text-align:center;font-size:11px;color:rgba(255,255,255,.2)}
-footer a{color:rgba(255,255,255,.35);text-decoration:none;margin:0 14px;transition:.25s}
-footer a:hover{color:#fff}
+.sec{position:relative;z-index:10;padding:110px 28px}
+.in2{max-width:1120px;margin:0 auto}
+.kick{font-size:11px;font-weight:800;letter-spacing:3px;color:#00f5ff;margin-bottom:12px;
+  font-family:Consolas,monospace;text-transform:uppercase}
+.kick::before{content:'// '}
+h2{font-size:clamp(26px,3.6vw,44px);font-weight:900;letter-spacing:-1.5px;margin-bottom:12px;line-height:1.2}
+h2 .g{background:linear-gradient(110deg,#00f5ff,#8b3dff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.desc{color:rgba(255,255,255,.45);max-width:520px;margin-bottom:44px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:rgba(0,245,255,.03);border:1px solid rgba(0,245,255,.15);border-radius:3px;
+  padding:30px 26px;transition:.35s;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;top:0;left:0;width:0;height:2px;
+  background:linear-gradient(90deg,#00f5ff,#8b3dff);transition:width .5s}
+.card:hover::after{width:100%}
+.card:hover{border-color:rgba(0,245,255,.5);transform:translateY(-4px);box-shadow:0 18px 60px rgba(0,245,255,.1)}
+.card .n{font-size:10px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.45);margin-bottom:12px;
+  font-family:Consolas,monospace}
+.card .ic{font-size:24px;margin-bottom:12px}
+.card h3{font-size:17px;font-weight:800;margin-bottom:8px}
+.card p{font-size:13.5px;color:rgba(255,255,255,.45)}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.shot{border:1px solid rgba(0,245,255,.15);border-radius:3px;overflow:hidden}
+.shot img{width:100%;display:block;filter:brightness(.88)}
+footer{position:relative;z-index:10;border-top:1px solid rgba(0,245,255,.1);
+  padding:36px 28px 50px;text-align:center;font-size:11px;color:rgba(255,255,255,.25);
+  font-family:Consolas,monospace}
+footer a{color:rgba(0,245,255,.5);text-decoration:none;margin:0 12px}
+@media(max-width:800px){.shots{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<canvas id="three-bg"></canvas>
-<div class="vignette"></div><div class="noise"></div>
+<canvas id="cv"></canvas>
+<div class="vig"></div>
 
-<header>
-  <div class="logo"><span class="dot">⚡</span>AI浏览器</div>
-  <nav><a href="#ability">能力</a><a href="#compare">对比</a><a href="#ui">界面</a><a href="#model">模型</a><a href="#faq">问答</a></nav>
-  <a class="cta-sm" id="dlTop" href="https://github.com/q404365631/liulanqi-update/releases/latest">免费下载</a>
-</header>
+<div id="lock">
+  <div id="loader">
+    <div class="lbl">INITIALIZING NEURAL CORE</div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="pct" id="pct">0%</div>
+  </div>
+</div>
 
 <section class="hero">
-  <div class="hero-inner">
-    <div class="badge-line"><span class="pulse"></span>NEURAL ENGINE ONLINE · v0.3.1 · WINDOWS 10/11</div>
-    <h1>AI 不是插件<br><span class="grad">它就是浏览器</span>
-      <span class="thin">AN AI THAT LIVES IN YOUR BROWSER</span>
-    </h1>
-    <p>说一句话，它替你搜、替你点、替你总结。看过的网页它记得住，表格它帮你填，数据加密后只进你自己的网盘。</p>
+  <div class="txt" id="heroTxt">
+    <h1>AI 不是插件<br><span class="g">它就是浏览器</span></h1>
+    <p>说一句话，它替你搜、替你点、替你总结。看过的网页它记得住，表单它帮你填，数据加密后只进你自己的网盘。</p>
     <div class="btns">
-      <a class="btn-primary" id="dlMain" href="https://github.com/q404365631/liulanqi-update/releases/latest">⬇ 免费下载</a>
-      <a class="btn-secondary" href="https://github.com/q404365631/liulanqi-update">GitHub</a>
+      <a class="btn" href="https://github.com/q404365631/liulanqi-update/releases/latest">⬇ 免费下载</a>
+      <a class="btn2" href="https://github.com/q404365631/liulanqi-update">GITHUB</a>
     </div>
   </div>
 </section>
 
-<div class="sec" id="ability"><div class="inner">
-  <div class="kicker">Capabilities</div>
-  <div class="sec-title">它能替你干的<span class="grad">六件事</span></div>
-  <p class="sec-desc">不是陪你聊天，是把活干完再回来复命。</p>
+<div class="sec"><div class="in2">
+  <div class="kick">Capabilities</div>
+  <h2>它能替你干的<span class="g">六件事</span></h2>
+  <p class="desc">不是陪你聊天，是把活干完再回来复命。</p>
   <div class="grid">
-    <div class="gcard"><div class="n">01 / AGENT</div><div class="ic">🤖</div><h3>自己上网办事</h3><p>先出执行计划给你确认，然后跨网站自己点、自己填。查到的价格和结论自动整理成表格报告。</p></div>
-    <div class="gcard"><div class="n">02 / MEMORY</div><div class="ic">🧠</div><h3>记住你看过的一切</h3><p>看过的网页自动存成本地摘要。问"上周那篇讲显卡的说了什么"，跨页面跨会话回答，附当时的链接。</p></div>
-    <div class="gcard"><div class="n">03 / AUTOFILL</div><div class="ic">🪄</div><h3>表单替你填</h3><p>资料卡填一次（加密存本机），之后任何网站的注册、收货表单点一下自动填好。提交键永远留给你按。</p></div>
-    <div class="gcard"><div class="n">04 / TRANSLATE</div><div class="ic">🌐</div><h3>整页翻译 + 划词问答</h3><p>外文网页一键翻成中文（悬停看原文），选中文字即问即答，报错看不懂直接截图丢给它。</p></div>
-    <div class="gcard"><div class="n">05 / BACKUP</div><div class="ic">☁️</div><h3>网盘加密备份</h3><p>书签密码记忆用你的口令 AES-256 加密，自动存进你自己的百度网盘，换电脑一键拉回。</p></div>
-    <div class="gcard"><div class="n">06 / ORGANIZER</div><div class="ic">🧹</div><h3>标签整理</h3><p>标签开成一锅粥？AI 按主题自动分组上色、揪出重复开的页面，给你一个一键关闭按钮。</p></div>
+    <div class="card"><div class="n">01 / AGENT</div><div class="ic">🤖</div><h3>自己上网办事</h3><p>先出执行计划给你确认，然后跨网站自己点、自己填，最后整理成表格报告。</p></div>
+    <div class="card"><div class="n">02 / MEMORY</div><div class="ic">🧠</div><h3>记住你看过的一切</h3><p>看过的网页自动存成本地摘要，跨会话回答，附当时的链接。</p></div>
+    <div class="card"><div class="n">03 / AUTOFILL</div><div class="ic">🪄</div><h3>表单替你填</h3><p>资料卡填一次，之后任何网站的注册、收货表单点一下自动填好。</p></div>
+    <div class="card"><div class="n">04 / TRANSLATE</div><div class="ic">🌐</div><h3>整页翻译</h3><p>外文网页一键翻成中文，选中文字即问即答。</p></div>
+    <div class="card"><div class="n">05 / BACKUP</div><div class="ic">☁️</div><h3>网盘加密备份</h3><p>用你的口令 AES-256 加密，自动存进你自己的百度网盘。</p></div>
+    <div class="card"><div class="n">06 / ORGANIZER</div><div class="ic">🧹</div><h3>标签整理</h3><p>按主题自动分组上色、揪出重复页面。</p></div>
   </div>
 </div></div>
 
-<div class="sec" id="compare"><div class="inner">
-  <div class="kicker">Comparison</div>
-  <div class="sec-title">和"装了 AI 插件的浏览器"<span class="grad">差在哪</span></div>
-  <p class="sec-desc">同样的功能名，干法不一样。</p>
-  <div class="cmpwrap"><table class="cmp">
-    <tr><th></th><th>普通浏览器 + AI 插件</th><th>AI 浏览器</th></tr>
-    <tr><td>AI 操作网页</td><td class="n2">只给建议，要你自己点</td><td class="y">自己点、自己填，出报告</td></tr>
-    <tr><td>记住看过的东西</td><td class="n2">无</td><td class="y">本地记忆大脑，跨会话可问</td></tr>
-    <tr><td>填表单</td><td class="n2">猜字段名，常填错</td><td class="y">读字段语义，只用你的资料</td></tr>
-    <tr><td>数据在哪</td><td class="n2">上传到厂商服务器</td><td class="y">只在你电脑 + 你自己的网盘</td></tr>
-    <tr><td>费用</td><td class="n2">订阅制 / 额度耗尽</td><td class="y">软件免费，只付模型钱</td></tr>
-  </table></div>
-</div></div>
-
-<div class="sec" id="ui"><div class="inner">
-  <div class="kicker">Interface</div>
-  <div class="sec-title">真实界面，<span class="grad">不是效果图</span></div>
-  <p class="sec-desc">AI 面板就长在浏览器右侧，随叫随到。</p>
+<div class="sec"><div class="in2">
+  <div class="kick">Interface</div>
+  <h2>真实界面，<span class="g">不是效果图</span></h2>
   <div class="shots">
-    <div class="shot"><img src="images/screenshot-main.png" alt="主界面"><div class="cap">Main View / 主界面</div></div>
-    <div class="shot"><img src="images/screenshot-ai.png" alt="AI 面板"><div class="cap">AI Panel / 助手对话</div></div>
+    <div class="shot"><img src="images/screenshot-main.png" alt=""></div>
+    <div class="shot"><img src="../images/screenshot-ai.png" alt=""></div>
   </div>
 </div></div>
 
-<div class="sec" id="model"><div class="inner">
-  <div class="kicker">Model Matrix</div>
-  <div class="sec-title">用什么模型，<span class="grad">看你想跑多快</span></div>
-  <p class="sec-desc">设置 → AI 助手 → 点「📖 查看全网模型推荐」，一键填入，你只需贴自己的 Key。</p>
-  <div class="mtxwrap"><table class="mtx">
-    <tr><th>TIER</th><th>MODEL</th><th>PERFORMANCE</th><th>COST</th></tr>
-    <tr><td>FREE</td><td><b>LongCat-Flash</b> / glm-4-flash</td><td>对话、翻译、总结流畅；自动操作基础任务可用</td><td>全免费</td></tr>
-    <tr><td>RECOMMENDED</td><td><b>deepseek-chat</b> / glm-5.3-flash</td><td>自动操作每步 3-10 秒，复杂任务成功率高</td><td>每月几块钱</td></tr>
-    <tr><td>MAX</td><td>glm-5.3 / Kimi K3.1 Pro / qwen-max</td><td>跨站比价、百万字长文档，最强</td><td>中高</td></tr>
+
+<div class="sec"><div class="in2">
+  <div class="kick">Comparison</div>
+  <h2>和“装了 AI 插件的浏览器”<span class="g">差在哪</span></h2>
+  <p class="desc">同样的功能名，干法不一样。</p>
+  <div style="border:1px solid rgba(0,245,255,.15);border-radius:3px;overflow:hidden;background:rgba(0,245,255,.03)"><table style="width:100%;border-collapse:collapse;font-size:13.8px">
+    <tr><th style="padding:15px 22px;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.5);border-bottom:1px solid rgba(0,245,255,.15)"></th><th style="padding:15px 22px;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.5);border-bottom:1px solid rgba(0,245,255,.15)">普通浏览器 + AI 插件</th><th style="padding:15px 22px;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.5);border-bottom:1px solid rgba(0,245,255,.15)">AI 浏览器</th></tr>
+    <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">AI 操作网页</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.25)">只给建议，要你自己点</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">自己点、自己填，出报告</td></tr>
+      <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">记住看过的东西</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.25)">无</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">本地记忆大脑，跨会话可问</td></tr>
+      <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">填表单</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.25)">猜字段名，常填错</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">读字段语义，只用你的资料</td></tr>
+      <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">数据在哪</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.25)">上传到厂商服务器</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">只在你电脑 + 你自己的网盘</td></tr>
+      <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">费用</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.25)">订阅制 / 额度耗尽</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">软件免费，只付模型钱</td></tr>
   </table></div>
 </div></div>
 
-<div class="sec" id="faq"><div class="inner">
-  <div class="kicker">FAQ</div>
-  <div class="sec-title">你可能想问的</div>
-  <div class="faq">
-    <div class="qa"><div class="q">要花钱吗？<span>+</span></div><div class="a2">软件本身完全免费、无广告。AI 功能需要你自己配一个模型 API Key，选免费模型（美团 LongCat、glm-4-flash）就零成本，选 deepseek 级别每月也就几块钱。</div></div>
-    <div class="qa"><div class="q">我的数据安全吗？<span>+</span></div><div class="a2">我们没有服务器，也不注册账号。书签密码存你电脑本地（Windows 系统级加密），网盘备份用你自己的口令做 AES-256 端到端加密——我们和百度都读不到内容。</div></div>
-    <div class="qa"><div class="q">AI 会不会乱点乱提交？<span>+</span></div><div class="a2">自动操作会先给执行计划，你点"开始执行"它才动；填表只填不提交，提交键永远由你按，任何一步都能中途停。</div></div>
-    <div class="qa"><div class="q">支持哪些系统？<span>+</span></div><div class="a2">Windows 10 / 11 64 位，安装包可以自己选安装盘，不会偷偷装进 C 盘。</div></div>
-    <div class="qa"><div class="q">能导入 Chrome 的书签吗？<span>+</span></div><div class="a2">能。书签面板里有「导入书签」，选 Chrome/Edge 导出的 html 文件即可，自动去重。</div></div>
+<div class="sec"><div class="in2">
+  <div class="kick">Model Matrix</div>
+  <h2>用什么模型，<span class="g">看你想跑多快</span></h2>
+  <p class="desc">设置 → AI 助手 → 点「查看全网模型推荐」，一键填入，你只需贴自己的 Key。</p>
+  <div style="border:1px solid rgba(0,245,255,.15);border-radius:3px;overflow:hidden;background:rgba(0,245,255,.03)"><table style="width:100%;border-collapse:collapse;font-size:13.8px">
+    <tr><th style="padding:15px 22px;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.5);border-bottom:1px solid rgba(0,245,255,.15)">TIER</th><th style="padding:15px 22px;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.5);border-bottom:1px solid rgba(0,245,255,.15)">MODEL</th><th style="padding:15px 22px;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.5);border-bottom:1px solid rgba(0,245,255,.15)">PERFORMANCE</th><th style="padding:15px 22px;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:2px;color:rgba(0,245,255,.5);border-bottom:1px solid rgba(0,245,255,.15)">COST</th></tr>
+    <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.5)">FREE</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">LongCat-Flash / glm-4-flash</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.5)">对话、翻译、总结流畅</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">全免费</td></tr>
+      <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.5)">RECOMMENDED</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">deepseek-chat / glm-5.3-flash</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.5)">自动操作每步 3-10 秒，成功率高</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">每月几块钱</td></tr>
+      <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.5)">MAX</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#fff;font-weight:700">glm-5.3 / Kimi K3.1 Pro</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:rgba(255,255,255,.5)">跨站比价、百万字长文档最强</td><td style="padding:16px 22px;border-bottom:1px solid rgba(0,245,255,.08);color:#00f5ff;font-weight:700">中高</td></tr>
+  </table></div>
+</div></div>
+
+<div class="sec"><div class="in2">
+  <div class="kick">FAQ</div>
+  <h2>你可能想问的</h2>
+  <div style="max-width:700px">
+    <div class="qa" style="border-bottom:1px solid rgba(0,245,255,.1);padding:22px 0"><div class="q" style="font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;color:#fff">要花钱吗？<span style="color:#00f5ff">+</span></div><div class="a" style="max-height:0;overflow:hidden;transition:.35s;color:rgba(255,255,255,.45);font-size:14px">软件完全免费、无广告。AI 功能需要你自己配一个模型 API Key，选免费模型（美团 LongCat、glm-4-flash）零成本，选 deepseek 级别每月几块钱。</div></div>
+    <div class="qa" style="border-bottom:1px solid rgba(0,245,255,.1);padding:22px 0"><div class="q" style="font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;color:#fff">我的数据安全吗？<span style="color:#00f5ff">+</span></div><div class="a" style="max-height:0;overflow:hidden;transition:.35s;color:rgba(255,255,255,.45);font-size:14px">我们没有服务器，也不注册账号。书签密码存你电脑本地（Windows 系统级加密），网盘备份用你自己的口令做 AES-256 端到端加密——我们和百度都读不到内容。</div></div>
+    <div class="qa" style="border-bottom:1px solid rgba(0,245,255,.1);padding:22px 0"><div class="q" style="font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;color:#fff">AI 会不会乱点乱提交？<span style="color:#00f5ff">+</span></div><div class="a" style="max-height:0;overflow:hidden;transition:.35s;color:rgba(255,255,255,.45);font-size:14px">自动操作先给执行计划，你点“开始执行”它才动；填表只填不提交，提交键永远由你按，任何一步都能中途停。</div></div>
+    <div class="qa" style="border-bottom:1px solid rgba(0,245,255,.1);padding:22px 0"><div class="q" style="font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;color:#fff">支持哪些系统？<span style="color:#00f5ff">+</span></div><div class="a" style="max-height:0;overflow:hidden;transition:.35s;color:rgba(255,255,255,.45);font-size:14px">Windows 10 / 11 64 位，安装包可以自己选安装盘，不会偷偷装进 C 盘。</div></div>
   </div>
 </div></div>
 
-<div class="final">
-  <div class="kicker">Get Started</div>
-  <div class="sec-title">现在装，<span class="grad">十分钟后它就开始替你干活</span></div>
-  <p>免费、无广告、可以自己选安装盘。</p>
-  <a class="primary" id="dlBottom" href="https://github.com/q404365631/liulanqi-update/releases/latest">⬇ 免费下载 Windows 版</a>
-  <div class="platform">Windows 10 / 11 · 64-bit · 约 77MB</div>
+<div style="position:relative;z-index:10;text-align:center;padding:130px 28px">
+  <div class="kick" style="justify-content:center">Get Started</div>
+  <h2 style="font-size:clamp(28px,4.2vw,50px)">现在装，<span class="g">十分钟后它就开始替你干活</span></h2>
+  <p style="color:rgba(255,255,255,.45);margin:14px 0 40px;font-size:15px">免费、无广告、可以自己选安装盘。</p>
+  <a class="btn" href="https://github.com/q404365631/liulanqi-update/releases/latest">⬇ 免费下载 Windows 版</a>
+  <div style="margin-top:20px;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.25);font-family:Consolas,monospace">WINDOWS 10 / 11 · 64-BIT · 约 77MB</div>
 </div>
 
 <footer>
-  <a href="PRIVACY.md">隐私政策</a><a href="TERMS.md">服务条款</a><a href="baidu-backup-guide.md">网盘备份教程</a><a href="https://github.com/q404365631/liulanqi-update">GitHub</a>
+  <a href="PRIVACY.md">隐私政策</a><a href="TERMS.md">服务条款</a><a href="https://github.com/q404365631/liulanqi-update">GITHUB</a>
   <br><br>AI BROWSER · 数据不属于我们，属于你
-  <div style="margin-top:14px;color:rgba(255,255,255,.08)">build v16</div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 <script>
-/* ===== Three.js 3D 粒子星系 ===== */
+/* ================= 3D 空间隧道：飞向深处的光门 ================= */
 (function(){
-  if (typeof THREE === 'undefined') return;
-  var canvas = document.getElementById('three-bg');
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true });
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var W, H, DPR = Math.min(devicePixelRatio||1, 2);
+  function rs(){ W=innerWidth; H=innerHeight;
+    cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0); }
+  rs(); addEventListener('resize', rs);
 
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 5);
-
-  // 粒子星系：球体 + 旋臂
-  var galaxyGeo = new THREE.BufferGeometry();
-  var galaxyN = 3000, positions = new Float32Array(galaxyN * 3), colors = new Float32Array(galaxyN * 3);
-  var cPurple = new THREE.Color('#7c3aed'), cCyan = new THREE.Color('#06b6d4'), cPink = new THREE.Color('#f472b6');
-  for (var i = 0; i < galaxyN; i++){
-    var arm = i % 3, radius = Math.pow(Math.random(), 0.7) * 4;
-    var angle = arm * (Math.PI * 2 / 3) + radius * 0.9 + (Math.random() - 0.5) * 0.4;
-    var x = Math.cos(angle) * radius + (Math.random() - 0.5) * 0.3;
-    var y = (Math.random() - 0.5) * 0.4 * (1 - radius / 4);
-    var z = Math.sin(angle) * radius + (Math.random() - 0.5) * 0.3;
-    positions[i*3] = x; positions[i*3+1] = y; positions[i*3+2] = z;
-    var col = radius < 1.2 ? cPurple : (radius < 2.5 ? cCyan : cPink);
-    colors[i*3] = col.r; colors[i*3+1] = col.g; colors[i*3+2] = col.b;
+  var FOV = 380;
+  var stars = [];
+  for (var i = 0; i < 700; i++){
+    stars.push({
+      x: (Math.random()-0.5) * 2600,
+      y: (Math.random()-0.5) * 2600,
+      z: Math.random() * 2600 + 60,
+      hue: Math.random()
+    });
   }
-  galaxyGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  var galaxyMat = new THREE.PointsMaterial({
-    size: 0.018, vertexColors: true, transparent: true, opacity: 0.8,
-    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
-  });
-  var galaxy = new THREE.Points(galaxyGeo, galaxyMat);
-  scene.add(galaxy);
 
-  // 环绕粒子（外围散点）
-  var surroundGeo = new THREE.BufferGeometry();
-  var sN = 800, sPos = new Float32Array(sN * 3), sCol = new Float32Array(sN * 3);
-  for (var s = 0; s < sN; s++){
-    var sr = 4 + Math.random() * 3, sa = Math.random() * Math.PI * 2;
-    var sy = (Math.random() - 0.5) * 2.5;
-    sPos[s*3] = Math.cos(sa) * sr; sPos[s*3+1] = sy; sPos[s*3+2] = Math.sin(sa) * sr;
-    var sc = Math.random() > 0.5 ? cCyan : cPurple;
-    sCol[s*3] = sc.r; sCol[s*3+1] = sc.g; sCol[s*3+2] = sc.b;
-  }
-  surroundGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-  surroundGeo.setAttribute('color', new THREE.BufferAttribute(sCol, 3));
-  var surroundMat = new THREE.PointsMaterial({
-    size: 0.014, vertexColors: true, transparent: true, opacity: 0.35,
-    blending: THREE.AdditiveBlending, depthWrite: false
-  });
-  var surround = new THREE.Points(surroundGeo, surroundMat);
-  scene.add(surround);
+  /* 门框环：多层同心六边形，随距离缩放 */
+  var gates = [];
+  for (var g = 0; g < 7; g++) gates.push({ z: 200 + g * 380, rot: Math.random()*6.28 });
 
-  // 中心核心光球
-  var coreGeo = new THREE.SphereGeometry(0.35, 32, 32);
-  var coreMat = new THREE.MeshBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.12 });
-  var core = new THREE.Mesh(coreGeo, coreMat);
-  scene.add(core);
-  var coreRing = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.006, 8, 64),
-    new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.35 }));
-  coreRing.rotation.x = Math.PI / 2.2;
-  scene.add(coreRing);
+  var speed = 0, targetSpeed = 0, mouseX = 0, mouseY = 0, camX = 0, camY = 0;
+  var start = performance.now(), launched = false;
 
-  // 鼠标交互
-  var mouseX = 0, mouseY = 0;
   addEventListener('mousemove', function(e){
-    mouseX = (e.clientX / innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / innerHeight) * 2 + 1;
-  });
-  addEventListener('resize', function(){
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth, innerHeight);
+    mouseX = (e.clientX / W - 0.5) * 2;
+    mouseY = (e.clientY / H - 0.5) * 2;
   });
 
-  // 动画
-  var scrollY = 0;
-  addEventListener('scroll', function(){ scrollY = window.scrollY; }, { passive: true });
+  var bar = document.getElementById('bar'), pct = document.getElementById('pct');
+  var lock = document.getElementById('lock'), heroTxt = document.getElementById('heroTxt');
 
-  function animate(){
-    requestAnimationFrame(animate);
-    galaxy.rotation.y += 0.0012;
-    galaxy.rotation.x = mouseY * 0.12 + scrollY * 0.00003;
-    surround.rotation.y -= 0.0005;
-    core.scale.setScalar(1 + Math.sin(Date.now() / 800) * 0.12);
-    coreRing.rotation.z += 0.004;
-    camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.03;
-    camera.position.y += (mouseY * 0.3 - camera.position.y) * 0.03;
-    camera.lookAt(0, 0, 0);
-    camera.position.z = 5 + scrollY * 0.001;   // 滚动推近
-    renderer.render(scene, camera);
+  /* 加载进度条（视觉上的"启动"感） */
+  var prog = 0;
+  var progTimer = setInterval(function(){
+    prog = Math.min(100, prog + Math.random() * 11 + 4);
+    bar.style.width = prog + '%';
+    pct.textContent = Math.floor(prog) + '%';
+    if (prog >= 100){
+      clearInterval(progTimer);
+      setTimeout(function(){
+        lock.classList.add('gone');
+        heroTxt.classList.add('in');
+        launched = true;
+        targetSpeed = 1;
+        setTimeout(function(){ targetSpeed = 0.18; }, 2600);   // 冲刺后减速到巡航
+      }, 420);
+    }
+  }, 130);
+
+  var t0 = performance.now();
+  function frame(now){
+    var el = (now - t0) / 1000;
+    speed += (targetSpeed - speed) * 0.045;
+
+    camX += (mouseX * 120 - camX) * 0.05;
+    camY += (mouseY * 80 - camY) * 0.05;
+
+    /* 残影拖尾 */
+    ctx.fillStyle = 'rgba(0,3,8,0.28)';
+    ctx.fillRect(0, 0, W, H);
+
+    var cx = W/2 + camX, cy = H/2 + camY;
+
+    /* 星流 */
+    for (var i2 = 0; i2 < stars.length; i2++){
+      var p = stars[i2];
+      p.z -= speed * 26;
+      if (p.z < 30){ p.z = 2600; p.x = (Math.random()-0.5)*2600; p.y = (Math.random()-0.5)*2600; }
+
+      var k = FOV / p.z;
+      var sx = cx + p.x * k, sy = cy + p.y * k;
+      if (sx < -60 || sx > W+60 || sy < -60 || sy > H+60) continue;
+
+      var size = Math.max(0.3, 2.6 * k * 0.55);
+      var prevK = FOV / (p.z + speed * 26 * 3.2);
+      var px = cx + p.x * prevK, py = cy + p.y * prevK;
+
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(sx, sy);
+      ctx.strokeStyle = p.hue < 0.5
+        ? 'rgba(0,245,255,' + Math.min(1, k*1.6) + ')'
+        : (p.hue < 0.8 ? 'rgba(139,61,255,' + Math.min(1, k*1.6) + ')' : 'rgba(255,45,149,' + Math.min(1, k*1.6) + ')');
+      ctx.lineWidth = size * 0.8;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    /* 空间门环 */
+    for (var gi = 0; gi < gates.length; gi++){
+      var gate = gates[gi];
+      gate.z -= speed * 26;
+      gate.rot += 0.004 + speed * 0.012;
+      if (gate.z < 40){ gate.z += gates.length * 380; gate.rot = Math.random()*6.28; }
+      var gk = FOV / gate.z;
+      var r = 320 * gk;
+      if (r < 12 || r > Math.max(W,H)*2.4) continue;
+      var alpha = Math.min(0.5, gk * 0.9);
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(gate.rot);
+      ctx.strokeStyle = 'rgba(0,245,255,' + alpha + ')';
+      ctx.lineWidth = Math.max(0.5, 2.4 * gk);
+      /* 六边形门框 + 分段 */
+      var seg = 6;
+      for (var s = 0; s < seg; s++){
+        var a1 = (s/seg) * 6.283, a2 = ((s+1)/seg) * 6.283;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, a1 + 0.12, a2 - 0.12);
+        ctx.stroke();
+      }
+      /* 内侧刻度 */
+      ctx.strokeStyle = 'rgba(139,61,255,' + (alpha*0.8) + ')';
+      ctx.lineWidth = Math.max(0.3, 1.2*gk);
+      for (var t2 = 0; t2 < 24; t2++){
+        var aa = (t2/24)*6.283;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(aa)*r*0.92, Math.sin(aa)*r*0.92);
+        ctx.lineTo(Math.cos(aa)*r*0.78, Math.sin(aa)*r*0.78);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    /* 中心光核 */
+    var cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 130 + Math.sin(el*2)*18);
+    cg.addColorStop(0, 'rgba(0,245,255,' + (0.16 + speed*0.1) + ')');
+    cg.addColorStop(0.4, 'rgba(139,61,255,0.07)');
+    cg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = cg;
+    ctx.beginPath(); ctx.arc(cx, cy, 150 + Math.sin(el*2)*18, 0, 7); ctx.fill();
+
+    requestAnimationFrame(frame);
   }
-  animate();
+  requestAnimationFrame(frame);
 })();
 
-/* ===== FAQ ===== */
 document.querySelectorAll('.qa').forEach(function(q){
-  q.querySelector('.q').onclick = function(){ q.classList.toggle('open') };
+  var head = q.querySelector('.q'), body = q.querySelector('.a');
+  if (head && body) head.onclick = function(){
+    var open = body.style.maxHeight === '200px';
+    body.style.maxHeight = open ? '0' : '200px';
+    if (!open) body.style.paddingTop = '12px';
+  };
 });
-
-/* ===== 最新版下载 ===== */
-fetch('https://api.github.com/repos/q404365631/liulanqi-update/releases/latest')
-  .then(r => r.json()).then(rel => {
-    if (!rel || !rel.assets) return;
-    var exe = rel.assets.find(a => a.name.endsWith('.exe'));
-    if (exe) { ['dlMain','dlTop','dlBottom'].forEach(function(id){
-      var e = document.getElementById(id); if (e) e.href = exe.browser_download_url;
-    })}
-  }).catch(function(){});
 </script>
 </body>
 </html>
